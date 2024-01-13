@@ -5,16 +5,25 @@ import asyncio
 
 
 async def main():
+    # Load configuration, using .env file
     config: Config = load_config()
+
+    # Create bot instance
     bot: Bot = Bot(token=config.TelegramBot.bot_token)
+
+    # Create dispatcher instance
     dp: Dispatcher = Dispatcher()
 
-    # There must be routers
+    # Include routers
+    # Service handlers works with commands starting with '\'
     dp.include_router(router=service_handlers.router)
+    # User handlers are need for the game
     dp.include_router(router=user_handlers.router)
 
+    # Notify user of using only buttons and deletes inappropriate message
     dp.include_router(router=pass_handler.router)
 
+    # Delete webhook to drop accumulated updates and start polling
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 

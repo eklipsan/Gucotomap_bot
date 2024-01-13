@@ -1,3 +1,10 @@
+"""
+This code defines classes and functions to work with map data.
+It includes functions to randomly choose a town,
+retrieve a map based on given coordinates,
+and generate a set of countries for a quiz setup.
+"""
+
 import random
 import json
 from environs import Env
@@ -19,12 +26,15 @@ class MapBox:
 
 
 def _receive_random_town() -> ChosenTown:
+    """
+    Retrieves a random town from a JSON file containing town data.
+    """
     with open('map_data/towns.json', encoding='utf-8') as towns:
         json_file = json.load(towns)
 
-    choice_town = random.choice(list(json_file.keys()))
-    choice_values = json_file[choice_town]
-    chosen_town = ChosenTown(choice_town, choice_values)
+    choice_town: str = random.choice(list(json_file.keys()))
+    choice_values: dict[str: str] = json_file[choice_town]
+    chosen_town: ChosenTown = ChosenTown(choice_town, choice_values)
     return chosen_town
 
 
@@ -34,6 +44,9 @@ def _receive_map(longtitude: str,
                  scale: int = 1,
                  size: int = 11
                  ) -> MapBox:
+    """
+    Retrieves a map based on given coordinates and other optional parameters.
+    """
     env = Env()
     env.read_env()
     form = r"https://static-maps.yandex.ru/v1?"
@@ -49,10 +62,15 @@ def _receive_map(longtitude: str,
 
 
 def _receive_countries_set(right_country: str) -> tuple:
+    """
+    Generates a set of countries for a quiz setup,
+    including the correct country and three random wrong countries.
+    """
     with open('map_data/towns.json', encoding='utf-8') as js:
         json_file = json.load(js)
 
-    countries_list = [i['country'] for i in list(json_file.values())]
+    countries_list: list[str] = [i['country']
+                                 for i in list(json_file.values())]
     result_keyboard_set = set()
     result_keyboard_set.add(right_country)
     while len(result_keyboard_set) < 4:
@@ -63,6 +81,9 @@ def _receive_countries_set(right_country: str) -> tuple:
 
 
 def receive_quiz_setup() -> Union[ChosenTown, MapBox, tuple[str]]:
+    """
+    Retrieves a random town, a map, and a set of countries for a quiz setup.
+    """
     town = _receive_random_town()
     map = _receive_map(
         longtitude=town.town_values['longtitude'],

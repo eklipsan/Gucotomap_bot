@@ -1,5 +1,6 @@
 from aiogram import types
 
+# Keyboard for both the start menu and the main menu
 start_keyboard = types.ReplyKeyboardMarkup(
     keyboard=[
         [
