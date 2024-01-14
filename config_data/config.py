@@ -33,8 +33,7 @@ def load_config(path: str | None = None) -> Config:
     env = Env()
     env.read_env(path)
 
-    admin_ids_str = env.str("ADMIN_IDS").strip('[]')
-    admin_ids = list(map(int, admin_ids_str.split(',')))
+    admin_ids = list(map(int, env.list("ADMIN_IDS")))
 
     return Config(
         TelegramBot=TelegramBot(
