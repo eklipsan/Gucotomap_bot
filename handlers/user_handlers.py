@@ -35,7 +35,7 @@ async def setup_quiz(message: types.Message):
     )
 
 
-@router.message(F.text == "Let's play")
+@router.message(F.text == "Play")
 # Message handler that starts the quiz game.
 async def start_quiz(message: types.Message):
     global user
@@ -76,7 +76,7 @@ async def check_answer(message: types.Message):
             )
     else:
         await message.answer(
-            "If you want to play again, choose the 'Let's start' button.🎮",
+            "If you want to play again, choose the 'Play' button.🎮",
             reply_markup=lost_game_keyboard
         )
 
@@ -104,7 +104,7 @@ async def get_main_menu(message: types.Message):
     )
 
 
-@router.message(F.text == 'Show statistic')
+@router.message(F.text == 'Statistic')
 # This function shows user their game statistic
 async def show_statistic(message: types.Message):
     stat_text = (
