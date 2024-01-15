@@ -29,3 +29,7 @@ async def feedback_handler(message: Message):
     await message.answer(feedback_message, reply_markup=feedback_keyboard)
 
 
+@router.message(F.text == 'Get user id')
+async def admin_get_user_id(message: Message):
+    user_id_info = f"Your user id: <code>{message.from_user.id}</code>"
+    await message.answer(user_id_info)

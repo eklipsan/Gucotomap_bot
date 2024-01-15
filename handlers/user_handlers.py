@@ -1,7 +1,8 @@
 from aiogram import Router, types, F
-from workers.map_worker import receive_quiz_setup
+from workers.map_worker import receive_quiz_setup, ChosenTown
 from keyboards.user_keyboards import create_keyboard_countries, lost_game_keyboard
 from keyboards.service_keyboards import start_keyboard
+from access_filters.admin_filter import IsAdmin
 
 
 router: Router = Router()
@@ -18,10 +19,16 @@ user = {
     'played_games': 0
 }
 
+# Declare variables, that used in other modules
+countries = set()
+town = ChosenTown(town_name=None, town_values=None)
 
-# Function sets up a quiz by retrieving a random town and associated map data.
-# It creates a keyboard for selecting countries and sends a photo to the user.
+
 async def setup_quiz(message: types.Message):
+    """
+    Function sets up a quiz by retrieving a random town and associated map data.
+    It creates a keyboard for selecting countries and sends a photo to the user.
+    """
     global town, countries
     town, map, countries = receive_quiz_setup()
     keyboard = create_keyboard_countries(countries=countries)
@@ -116,3 +123,13 @@ async def show_statistic(message: types.Message):
         "Thank you for playing and being part of the excitement! 🙌✨"
     )
     await message.answer(stat_text)
+
+
+@router.message(IsAdmin() and F.text == 'Get answer')
+async def admin_get_answer(message: types.Message):
+    '''
+    Handler, that returns the right current answer.
+    It works only for admins.
+    '''
+    admin_answer_text = f"Town: {town.town_name}\nTown values: {town.town_values}"
+    await message.answer(admin_answer_text)

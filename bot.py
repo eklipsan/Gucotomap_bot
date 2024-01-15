@@ -1,6 +1,9 @@
 from aiogram import Bot, Dispatcher
 from config_data.config import Config, load_config
-from handlers import service_handlers, user_handlers, pass_handler
+from handlers import (service_handlers,
+                      user_handlers,
+                      pass_handler,
+                      admin_handlers)
 import asyncio
 
 
@@ -9,7 +12,7 @@ async def main():
     config: Config = load_config()
 
     # Create bot instance
-    bot: Bot = Bot(token=config.TelegramBot.bot_token)
+    bot: Bot = Bot(token=config.TelegramBot.bot_token, parse_mode='HTML')
 
     # Create dispatcher instance
     dp: Dispatcher = Dispatcher()
@@ -20,6 +23,8 @@ async def main():
     # User handlers are need for the game
     dp.include_router(router=user_handlers.router)
 
+    # Commands, that allowed only for admins
+    dp.include_router(router=admin_handlers.router)
     # Notify user of using only buttons and deletes inappropriate message
     dp.include_router(router=pass_handler.router)
 
