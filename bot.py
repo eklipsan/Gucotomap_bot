@@ -4,6 +4,7 @@ from handlers import (service_handlers,
                       user_handlers,
                       pass_handler,
                       admin_handlers)
+from workers.menu import set_main_menu
 import asyncio
 
 
@@ -30,6 +31,7 @@ async def main():
 
     # Delete webhook to drop accumulated updates and start polling
     await bot.delete_webhook(drop_pending_updates=True)
+    await set_main_menu(bot)
     await dp.start_polling(bot)
 
 
