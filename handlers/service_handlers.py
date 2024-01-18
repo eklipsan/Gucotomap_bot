@@ -14,6 +14,22 @@ async def start_handler(message: Message):
     await message.answer(start_message, reply_markup=start_keyboard)
 
 
+@router.message(Command('help'))
+async def help_handler(message: Message):
+    help_message = (
+        'To start playing you need to tap "Play"\n\n'
+        'The rules of this game📃\n'
+        '- A satellite image of the city appears in front of you🏙\n'
+        '- There are  4️⃣ options for which country the city belongs to\n'
+        '- Click on the suggested answer❓\n'
+        '- If the answer is correct✅, you get 1 point for the correct answer\n'
+        '- If the answer is wrong❌, you are taken off one attempt and the correct answer is shown.\n'
+        '-The total number of incorrect attempts per game is 5️⃣.\n\n'
+        'Have a good game🤗'
+    )
+    await message.answer(help_message)
+
+
 @router.message(F.text == 'Feedback')
 async def feedback_handler(message: Message):
     feedback_message = (
@@ -33,3 +49,11 @@ async def feedback_handler(message: Message):
 async def admin_get_user_id(message: Message):
     user_id_info = f"Your user id: <code>{message.from_user.id}</code>"
     await message.answer(user_id_info)
+
+
+@router.message(Command('admin'))
+async def no_admin_show_manual(message: Message):
+    manual_no_admin_message = (
+        'You do not have access to admin commands'
+    )
+    await message.answer(manual_no_admin_message)

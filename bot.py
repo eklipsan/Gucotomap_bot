@@ -18,14 +18,14 @@ async def main():
     # Create dispatcher instance
     dp: Dispatcher = Dispatcher()
 
-    # Include routers
-    # Service handlers works with commands starting with '\'
-    dp.include_router(router=service_handlers.router)
     # User handlers are need for the game
     dp.include_router(router=user_handlers.router)
-
+    # Include routers
     # Commands, that allowed only for admins
     dp.include_router(router=admin_handlers.router)
+    # Service handlers works with commands starting with '\'
+    dp.include_router(router=service_handlers.router)
+
     # Notify user of using only buttons and deletes inappropriate message
     dp.include_router(router=pass_handler.router)
 
