@@ -1,14 +1,63 @@
-# Telegram bot GeoGuesser
+# Telegram bot MapQuest
 
 A simple game of guessing places on the map through a telegram bot
 
-
 # P.S
+README.md is not yet complete, but will be updated with necessary information as it becomes available.
 For some time the README.MD file will be replaced by the tz.md file, which describes the technical description of the project
 
+# Technologies
+
+- Python 3.10
+    - aiogram - library for developing telegram bots
+
+
+# General info
+This project is a telegram bot that offers to play a game where you have to guess which country the city shown on the map belongs to. Static API map from Yandex is used to create maps. I attach a link to its documentation [link](https://yandex.ru/dev/staticapi/doc/en/quickstart). Using aiogram library we develop our telegram bot. Here is the [link](https://aiogram.dev) of its.
+
+
+## API Reference
+
+### Sample API-request
+```
+https://static-maps.yandex.ru/v1?ll=37.620070,55.753630&size=450,450&z=13&pt=37.620070,55.753630,pmwtm1~37.64,55.76363,pmwtm99&apikey=YOUR_API_KEY
+```
+Sample of API-request's result
+![](images/example.png)
+
+## Bot logic
+
+- bot.py - binds all the components and launches the bot
+- workers
+    - map_worker.py - works with api-map, and represent main thing in this game - creating a map image and providing response options.
+    - menu.py - sets menu option (/start, /help, etc)
+- map_data - stores json format file, where a city is represented like dictionary. For example:
+```
+"Tokyo": {
+        "latitude": 35.6897,
+        "longtitude": 139.6922,
+        "country": "Japan",
+        "capital": "Tōkyō",
+        "population": 37732000.0
+    }
+```
+- keyboards
+    - service_keyboards.py - stores buttons type of InlineKeyboard, ReplyKeyboard, that used, where our user is in the main menu.
+    - user_keyboards.py - stores the same, but they are used, when the user in the game process.
+- handlers
+    - admin_handlers.py - aiogram handlers, that are available to admin users (they are known in .env)
+    - service_handlers.py - main handlers, that are used to navigate through the menu
+    - user_handlers.py - handlers, that are used while the user is in the game.
+    - pass_handlers.py - a stub that responds with an explanation of the absence of such a command.
+- config_data
+  -  config.py - stores class Config, that stores all the received data from .env file.
+- access_filters
+  - admin_filter.py - stores filter for handlers, that checks if user id is in ADMIN_IDS list from .env file.
 
 
 ## Feedback
+
+I would be be thankful for any criticism and suggestions about this project.
 
 kshabalin11@yandex.ru
 

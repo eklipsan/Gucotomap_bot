@@ -8,9 +8,11 @@ router: Router = Router()
 
 @router.message(Command('start'))
 async def start_handler(message: Message):
-    start_message = '''Welcome to the game GeoGuesser! 🗺
-    In this game you have to guess countries by satellite images of their cities🧐
-    To start playing click on the Let's play button 🎮'''
+    start_message = (
+        'Welcome to the game MapQuest! 🗺\n'
+        'In this game you have to guess countries by satellite images of their cities🧐\n'
+        'To start playing click on the Let\'s play button 🎮\n'
+    )
     await message.answer(start_message, reply_markup=start_keyboard)
 
 
