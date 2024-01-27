@@ -8,8 +8,8 @@ from access_filters.admin_filter import IsAdmin
 router: Router = Router()
 
 
-# Set up variables to keep track of the game state,
-# including the number of attempts, user scores, and game status.
+# Set up variables to keep track of the user's game state,
+# including the number of attempts.
 ATTEMPTS = 5
 user = {
     'game': False,
@@ -97,7 +97,7 @@ async def cancel_game(message: types.Message):
     user['played_games'] += 1
     user['game'] = False
     await message.answer(
-        "You canceled the game. You are in the main menu",
+        "You have canceled the game. You are in the main menu",
         reply_markup=start_keyboard
     )
 
@@ -109,20 +109,6 @@ async def get_main_menu(message: types.Message):
         "You are in the main menu",
         reply_markup=start_keyboard
     )
-
-
-@router.message(F.text == 'Statistic')
-# This function shows user their game statistic
-async def show_statistic(message: types.Message):
-    stat_text = (
-        "🌟 Here is your progress! 🎉\n\n"
-        f"Your maximum score so far is: {user['max_score']} 🏆\n"
-        f"Total games played: {user['played_games']} 🕹️\n\n"
-        "Keep playing to know more country cities! 🚀💪\n\n"
-        "Challenge yourself to beat your own record and become a quiz master! 🌟🧠\n\n"
-        "Thank you for playing and being part of the excitement! 🙌✨"
-    )
-    await message.answer(stat_text)
 
 
 @router.message(IsAdmin() and F.text == 'Get answer')

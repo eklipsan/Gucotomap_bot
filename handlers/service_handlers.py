@@ -2,15 +2,20 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message
 from keyboards.service_keyboards import start_keyboard, feedback_keyboard
+from handlers.user_handlers import user
 
 router: Router = Router()
+# using user's status (game, not game) to access service handlers
+router.message.filter(lambda message: user['game'] is False)
 
 
 @router.message(Command('start'))
 async def start_handler(message: Message):
-    start_message = '''Welcome to the game GeoGuesser! 🗺
-    In this game you have to guess countries by satellite images of their cities🧐
-    To start playing click on the Let's play button 🎮'''
+    start_message = (
+        'Welcome to the game MapQuest! 🗺\n'
+        'In this game you have to guess countries by satellite images of their cities🧐\n'
+        'To start playing click on the Let\'s play button 🎮\n'
+    )
     await message.answer(start_message, reply_markup=start_keyboard)
 
 
@@ -43,6 +48,20 @@ async def feedback_handler(message: Message):
     )
 
     await message.answer(feedback_message, reply_markup=feedback_keyboard)
+
+
+@router.message(F.text == 'Statistic')
+# This function shows user their game statistic
+async def show_statistic(message: Message):
+    stat_text = (
+        "🌟 Here is your progress! 🎉\n\n"
+        f"Your maximum score so far is: {user['max_score']} 🏆\n"
+        f"Total games played: {user['played_games']} 🕹️\n\n"
+        "Keep playing to know more country cities! 🚀💪\n\n"
+        "Challenge yourself to beat your own record and become a quiz master! 🌟🧠\n\n"
+        "Thank you for playing and being part of the excitement! 🙌✨"
+    )
+    await message.answer(stat_text)
 
 
 @router.message(F.text == 'Get user id')

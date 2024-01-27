@@ -1,6 +1,6 @@
 # Task Description
 ## What?
-A Telegram bot for playing the "GeoGuesser" game.
+A Telegram bot for playing the "MapQuest" game.
 ## Why?
 To enable users to play a simple game with the bot.
 ## Bot Capabilities
@@ -12,7 +12,7 @@ To enable users to play a simple game with the bot.
 1. The bot can display game statistics for users upon request.
 ## User Interaction Description
 1. The user sends the command /start to the bot (or starts it by finding it in the search).
-2. The bot greets the user and suggests playing the "GeoGuesser" game, as well as offers the user to read detailed rules by sending the command /help.
+2. The bot greets the user and suggests playing the "MapQuest" game, as well as offers the user to read detailed rules by sending the command /help.
 3. At this stage, the user can take 5 actions:
    - Agree to play the game with the bot by sending "Yes," "Let's play," or similar.
    - Decline to play by sending "No," "I don't want to," or similar.
