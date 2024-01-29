@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message
 from aiogram.filters import Command
 from config_data.config import Config, load_config
-from access_filters.admin_filter import IsAdmin
+from access_filters.tg_filter import IsAdmin
 
 config: Config = load_config()
 
