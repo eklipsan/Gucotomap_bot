@@ -2,11 +2,14 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message
 from keyboards.service_keyboards import start_keyboard, feedback_keyboard
-from handlers.user_handlers import user
+from access_filters.tg_filter import IsGame
+from workers.database import create_connection
 
 router: Router = Router()
 # using user's status (game, not game) to access service handlers
-router.message.filter(lambda message: user['game'] is False)
+router.message.filter(IsGame())
+
+user_collection = create_connection()
 
 
 @router.message(Command('start'))
@@ -53,6 +56,8 @@ async def feedback_handler(message: Message):
 @router.message(F.text == 'Statistic')
 # This function shows user their game statistic
 async def show_statistic(message: Message):
+    user_id = message.from_user.id
+    user = user_collection.find_one({"user_id": user_id})
     stat_text = (
         "🌟 Here is your progress! 🎉\n\n"
         f"Your maximum score so far is: {user['max_score']} 🏆\n"

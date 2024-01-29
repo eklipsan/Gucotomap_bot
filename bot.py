@@ -18,7 +18,7 @@ async def main():
     # Create dispatcher instance
     dp: Dispatcher = Dispatcher()
 
-    # User handlers are need for the game
+    # User handlers are necessary for the game
     dp.include_router(router=user_handlers.router)
     # Include routers
     # Commands, that allowed only for admins
