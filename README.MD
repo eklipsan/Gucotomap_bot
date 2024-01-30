@@ -1,6 +1,9 @@
-# Telegram bot MapQuest
+# Telegram bot Gucotomap
 
 A simple game of guessing places on the map through a telegram bot
+Gucotomomap is basically an acronym for "Guess the country by the town on the map."
+
+![](examples/gameplay.gif)
 
 # P.S
 README.md is not yet complete, but will be updated with necessary information as it becomes available.
@@ -10,10 +13,11 @@ For some time the README.MD file will be replaced by the tz.md file, which descr
 
 - Python 3.10
     - aiogram - library for developing telegram bots
+    - pymongo - Library for storing user data in MongoDB
 
 
 # General info
-This project is a telegram bot that offers to play a game where you have to guess which country the city shown on the map belongs to. Static API map from Yandex is used to create maps. I attach a link to its documentation [link](https://yandex.ru/dev/staticapi/doc/en/quickstart). Using aiogram library we develop our telegram bot. Here is the [link](https://aiogram.dev) of its.
+This project is a telegram bot that offers to play a game where you have to guess which country the city shown on the map belongs to. Static API map from Yandex is used to create maps. I attach a link to its documentation [link](https://yandex.ru/dev/staticapi/doc/en/quickstart). Using aiogram library we develop our telegram bot. Here is the [link](https://aiogram.dev) of its. Also, I use cloud MongoDB to storage user data [link](https://cloud.mongodb.com).
 
 
 ## API Reference
@@ -23,7 +27,9 @@ This project is a telegram bot that offers to play a game where you have to gues
 https://static-maps.yandex.ru/v1?ll=37.620070,55.753630&size=450,450&z=13&pt=37.620070,55.753630,pmwtm1~37.64,55.76363,pmwtm99&apikey=YOUR_API_KEY
 ```
 Sample of API-request's result
-![](images/example.png)
+![](examples/Delhi.png)
+![](examples/Guangzhou.png)
+![](examples/Jakarta.png)
 
 ## Bot logic
 
@@ -31,6 +37,7 @@ Sample of API-request's result
 - workers
     - map_worker.py - works with api-map, and represent main thing in this game - creating a map image and providing response options.
     - menu.py - sets menu option (/start, /help, etc)
+    - database - simplifies work with user data from cloud MongoDB
 - map_data - stores json format file, where a city is represented like dictionary. For example:
 ```
 "Tokyo": {
@@ -52,7 +59,7 @@ Sample of API-request's result
 - config_data
   -  config.py - stores class Config, that stores all the received data from .env file.
 - access_filters
-  - admin_filter.py - stores filter for handlers, that checks if user id is in ADMIN_IDS list from .env file.
+  - tg_filter.py - stores filters for handlers.
 
 
 ## Feedback
