@@ -28,7 +28,7 @@ def create_keyboard_countries(countries: tuple) -> ReplyKeyboardMarkup:
 lost_game_keyboard = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="Let's play"),
+            KeyboardButton(text="Play"),
             KeyboardButton(text="Go to main menu")
         ]
     ],

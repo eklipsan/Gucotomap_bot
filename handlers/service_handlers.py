@@ -17,7 +17,7 @@ async def start_handler(message: Message):
     start_message = (
         'Welcome to the game Gucotomap! 🗺\n'
         'In this game you have to guess countries by satellite images of their cities🧐\n'
-        'To start playing click on the Let\'s play button 🎮\n'
+        'To start playing click on the Play button 🎮\n'
     )
     await message.answer(start_message, reply_markup=start_keyboard)
 
