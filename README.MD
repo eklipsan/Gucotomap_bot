@@ -49,11 +49,12 @@ Sample of API-request's result
     }
 ```
 - keyboards
-    - service_keyboards.py - stores buttons type of InlineKeyboard, ReplyKeyboard, that used, where our user is in the main menu.
+    - menu_keyboards.py - stores buttons type of InlineKeyboard, ReplyKeyboard, that used, where our user is in the main menu.
     - user_keyboards.py - stores the same, but they are used, when the user in the game process.
 - handlers
     - admin_handlers.py - aiogram handlers, that are available to admin users (they are known in .env)
-    - service_handlers.py - main handlers, that are used to navigate through the menu
+    - command_handlers.py - handlers for commands starting with '/'
+    - menu_handlers.py - main handlers, that are used to navigate through the menu
     - user_handlers.py - handlers, that are used while the user is in the game.
     - pass_handlers.py - a stub that responds with an explanation of the absence of such a command.
 - config_data

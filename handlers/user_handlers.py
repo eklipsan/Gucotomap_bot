@@ -1,11 +1,11 @@
 from aiogram import Router, types, F
-from workers.map_worker import receive_quiz_setup, ChosenTown
+from workers.map_worker import receive_quiz_setup
 from keyboards.user_keyboards import create_keyboard_countries, lost_game_keyboard
-from keyboards.service_keyboards import start_keyboard
+from keyboards.menu_keyboards import start_keyboard
 from access_filters.tg_filter import IsAdmin
 from workers.database import create_connection
 from workers.database import (
-    init_user,
+    setup_user_question,
     check_user_game_status,
     start_user_game,
     check_positive_attempts,
@@ -26,22 +26,20 @@ ATTEMPTS = 5
 # Create mongodb connection for user data storage
 user_collection = create_connection()
 
-# Declare variables, that used in other modules
-countries = set()
-town = ChosenTown(town_name=None, town_values=None)
-
 
 async def setup_quiz(message: types.Message):
     """
     Sets up a quiz by retrieving a random town and associated map data.
     Creates a keyboard for selecting countries and sends a photo to the user.
     """
-    global town, countries
+    user_id = message.from_user.id
     town, map, countries = receive_quiz_setup()
-    keyboard = create_keyboard_countries(countries=countries)
+    setup_user_question(user_collection, user_id, town.town_name,
+                        town.town_values, map.url_link, countries)
+    user_dict = get_user_info(user_collection, user_id)
+    keyboard = create_keyboard_countries(countries=user_dict['countries'])
 
-    print(town.town_name)
-    print(town.town_values)
+    print(user_dict)
     await message.answer_photo(
         map.url_link,
         reply_markup=keyboard,
@@ -52,9 +50,7 @@ async def setup_quiz(message: types.Message):
 @router.message(F.text == "Play")
 async def start_quiz(message: types.Message):
     "Message handler that starts the quiz game."
-    global user_collection, ATTEMPTS
     user_id = message.from_user.id
-    init_user(user_collection, user_id, ATTEMPTS)
     if check_user_game_status(user_collection, user_id):
         await message.answer("You are already in the game")
     else:
@@ -67,32 +63,31 @@ async def next_quiz(message: types.Message):
     await setup_quiz(message)
 
 
-@router.message(lambda message: message.text in countries)
+@router.message(lambda message: message.text in get_user_info(user_collection, message.from_user.id)['countries'])
 async def check_answer(message: types.Message):
     """
     Message handler that checks the user's answer during the quiz game.
     It updates the user's score and attempts.
     Proceeds to the next quiz or ends the game based on the user's answer.
     """
-    global user_collection, ATTEMPTS
     user_id = message.from_user.id
     if check_user_game_status(user_collection, user_id):
-        if message.text == town.town_values['country']:
+        if message.text == get_user_info(user_collection, user_id)['town_values']['country']:
             increase_user_score(user_collection, user_id)
-            user_score, _ = get_user_info(user_collection, user_id)
-            good_job_message = f"🌟 GOOD JOB!🌟\nYour current score is {user_score}.\nKeep it going!✨"
+            user_dict = get_user_info(user_collection, user_id)
+            good_job_message = f"🌟 GOOD JOB!🌟\nYour current score is {user_dict['score']}.\nKeep it going!✨"
             await message.answer(good_job_message)
             await next_quiz(message)
-        elif message.text != town.town_values['country'] and check_positive_attempts(user_collection, user_id):
+        elif message.text != get_user_info(user_collection, user_id)['town_values']['country'] and check_positive_attempts(user_collection, user_id):
             decrease_user_attempts(user_collection, user_id)
-            _, user_attempts = get_user_info(user_collection, user_id)
-            await message.answer(f"Oops!😬\nThe right answer is {town.town_values['country']}.\nYou have {user_attempts} attempts left.")
+            user_dict = get_user_info(user_collection, user_id)
+            await message.answer(f"Oops!😬\nThe right answer is {user_dict['town_values']['country']}.\nYou have {user_dict['attempts']} attempts left.")
             await next_quiz(message)
         else:
+            user_dict = get_user_info(user_collection, user_id)
             finish_user_game(user_collection, user_id, ATTEMPTS)
-            user_score, _ = get_user_info(user_collection, user_id)
             await message.answer(
-                f"Sorry, but you've used up all your {ATTEMPTS} attempts😿. Your score is {user_score}.",
+                f"Sorry, but you've used up all your {ATTEMPTS} attempts😿. Your score is {user_dict['score']}.",
                 reply_markup=lost_game_keyboard
             )
     else:
@@ -128,5 +123,7 @@ async def admin_get_answer(message: types.Message):
     Handler, that returns the right current answer.
     It works only for admins.
     '''
-    admin_answer_text = f"Town: {town.town_name}\nTown values: {town.town_values}"
+    user_id = message.from_user.id
+    user_dict = get_user_info(user_collection, user_id)
+    admin_answer_text = f"Town: {user_dict['town_name']}\nTown values: {user_dict['town_values']}"
     await message.answer(admin_answer_text)

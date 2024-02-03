@@ -1,9 +1,10 @@
 from aiogram import Bot, Dispatcher
 from config_data.config import Config, load_config
-from handlers import (service_handlers,
+from handlers import (menu_handlers,
                       user_handlers,
                       pass_handler,
-                      admin_handlers)
+                      admin_handlers,
+                      command_handlers)
 from workers.menu import set_main_menu
 import asyncio
 
@@ -17,14 +18,15 @@ async def main():
 
     # Create dispatcher instance
     dp: Dispatcher = Dispatcher()
-
-    # User handlers are necessary for the game
-    dp.include_router(router=user_handlers.router)
     # Include routers
-    # Commands, that allowed only for admins
+    # Handlers, that allowed only for admins
     dp.include_router(router=admin_handlers.router)
-    # Service handlers works with commands starting with '\'
-    dp.include_router(router=service_handlers.router)
+    # Handler for commands starting with '/'
+    dp.include_router(router=command_handlers.router)
+    # Main menu handlers
+    dp.include_router(router=menu_handlers.router)
+    # User handlers for the game
+    dp.include_router(router=user_handlers.router)
 
     # Notify user of using only buttons and deletes inappropriate message
     dp.include_router(router=pass_handler.router)

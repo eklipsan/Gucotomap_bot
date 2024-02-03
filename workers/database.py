@@ -44,7 +44,7 @@ def create_connection() -> Collection:
     return user_collection
 
 
-def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int) -> None:
+def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int = 5) -> None:
     """
     Initializes a new user in the MongoDB database.
 
@@ -63,11 +63,47 @@ def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int) -> None:
             'attempts': ATTEMPTS,
             'score': 0,
             'max_score': 0,
-            'played_games': 0
+            'played_games': 0,
+            'town_name': '',
+            'town_values': dict(),
+            'map_url': '',
+            'countries': list()
         }
 
         # Insert the new user document into the database
         user_collection.insert_one(new_user)
+    updates = {'$set': {
+        'game': False,
+        'attempts': ATTEMPTS,
+        'score': 0,
+        'town_name': '',
+        'town_values': dict(),
+        'map_url': '',
+        'countries': list()
+
+    }}
+    user_collection.update_one(filter={"user_id": user_id}, update=updates)
+
+
+def setup_user_question(user_collection: Collection, user_id: int, town_name: str, town_values: dict, map_url: str, countries: tuple) -> None:
+    """
+    Initializes a user question. It is adjacent function with setup_quiz.
+
+    Args:
+        user_collection: A Collection object representing the 'users' collection in the MongoDB database.
+        user_id: The unique identifier of the user.
+        town_name: The name of the place of shown country on the map.
+        town_values: The dictionary with other information about the town.
+        map_url: API-url from Static Yandex Map, that returns a map photo.
+        countries: Set of unique countries, where is one right answer.
+    """
+    updates = {'$set': {
+        'town_name': town_name,
+        'town_values': town_values,
+        'map_url': map_url,
+        'countries': countries
+    }}
+    user_collection.update_one(filter={"user_id": user_id}, update=updates)
 
 
 def start_user_game(user_collection: Collection, user_id: int) -> None:
@@ -173,20 +209,30 @@ def finish_user_game(user_collection: Collection, user_id: int, ATTEMPTS: int) -
     user_collection.update_one({"user_id": user_id}, update=updates)
 
 
-def get_user_info(user_collection: Collection, user_id: int) -> [int, int]:
+def get_user_info(user_collection: Collection, user_id: int) -> dict:
     """
-    Retrieves the current score and number of attempts for the specified user.
+    Retrieves the current information for the specified user.
 
     Args:
         user_collection: A Collection object representing the 'users' collection in the MongoDB database.
         user_id: The unique identifier of the user.
 
     Returns:
-        A tuple containing the user's current score and number of attempts.
+        A user info dictionary with keys:
+        user_id - int,
+        game - bool,
+        attempts - int,
+        score - int,
+        max_score - int,
+        played_games - int,
+        town_name - str,
+        town_values - dict,
+        map_url - str,
+        countries - list
     """
 
     # Retrieve the user document from the database
     user_dict = user_collection.find_one(filter={"user_id": user_id})
 
     # Return the user's current score and number of attempts
-    return user_dict['score'], user_dict['attempts']
+    return user_dict
