@@ -3,11 +3,11 @@
 A simple game of guessing places on the map through a telegram bot
 Gucotomomap is basically an acronym for "Guess the country by the town on the map."
 
+You can play it right now by clicking on the following link https://t.me/gucotomap_bot
+
 ![](examples/gameplay.gif)
 
-# P.S
-README.md is not yet complete, but will be updated with necessary information as it becomes available.
-For some time the README.MD file will be replaced by the tz.md file, which describes the technical description of the project
+
 
 # Technologies
 
