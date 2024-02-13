@@ -21,10 +21,19 @@ class MapKeyAPI:
 
 
 @dataclass
+class LogConfig:
+    console_on: int
+    file_on: int
+    filepath: str
+    level_info_console: int
+    level_info_file: int
+
+@dataclass
 class Config:
     TelegramBot: TelegramBot
     DatabaseConfig: DatabaseConfig
     MapKeyAPI: MapKeyAPI
+    LogConfig: LogConfig
 
 
 def load_config(path: str | None = None) -> Config:
@@ -44,5 +53,13 @@ def load_config(path: str | None = None) -> Config:
             mongodb_password=env("MONGODB_PASSWORD"),
             mongodb_cluster=env("MONGODB_CLUSTER")
         ),
-        MapKeyAPI=MapKeyAPI(api_key=env("API_KEY_MAP"))
+        MapKeyAPI=MapKeyAPI(api_key=env("API_KEY_MAP")),
+        LogConfig=LogConfig(
+            console_on=env.int("LOG_CONSOLE_ON"),
+            file_on=env.int("LOG_FILE_ON"),
+            filepath=env("LOG_FILEPATH"),
+            level_info_console=env.int("LOG_LEVEL_INFO_CONSOLE"),
+            level_info_file=env.int("LOG_LEVEL_INFO_FILE")
+        )
+
     )

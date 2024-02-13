@@ -37,7 +37,8 @@ Sample of API-request's result
 - workers
     - map_worker.py - works with api-map, and represent main thing in this game - creating a map image and providing response options.
     - menu.py - sets menu option (/start, /help, etc)
-    - database - simplifies work with user data from cloud MongoDB
+    - database.py - simplifies work with user data from cloud MongoDB
+    - logset.py - creates logs of the bot's work. There are logging options in .env.example file
 - map_data - stores json format file, where a city is represented like dictionary. For example:
 ```
 "Tokyo": {
