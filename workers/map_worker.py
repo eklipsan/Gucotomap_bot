@@ -11,7 +11,7 @@ from environs import Env
 import requests
 from dataclasses import dataclass
 from typing import Union
-
+from workers.logset import logger
 
 @dataclass
 class ChosenTown:
@@ -35,6 +35,7 @@ def _receive_random_town() -> ChosenTown:
     choice_town: str = random.choice(list(json_file.keys()))
     choice_values: dict[str: str] = json_file[choice_town]
     chosen_town: ChosenTown = ChosenTown(choice_town, choice_values)
+    logger.debug("Retriving a random town from a JSON file")
     return chosen_town
 
 
@@ -55,9 +56,11 @@ def _receive_map(longtitude: str,
     map_box = MapBox(url_link=url_link)
 
     if requests.get(url_link).status_code == 200:
+        logger.debug("Retriving a map based on given coordinates")
         return map_box
     else:
         map_box.invalid_response = True
+        logger.error(f"Invalid response from the static maps server {map_box}")
         return map_box
 
 
@@ -76,7 +79,7 @@ def _receive_countries_set(right_country: str) -> tuple:
     while len(result_keyboard_set) < 4:
         wrong_country = random.choice(countries_list)
         result_keyboard_set.add(wrong_country)
-
+    logger.debug(f"Generating a set of countries for a quiz setup")
     return tuple(result_keyboard_set)
 
 
@@ -90,5 +93,6 @@ def receive_quiz_setup() -> Union[ChosenTown, MapBox, tuple[str]]:
         latitude=town.town_values['latitude']
     )
     countries = _receive_countries_set(town.town_values['country'])
+    logger.debug("Retriving a random town, its map, and a set of countries")
 
     return town, map, countries
