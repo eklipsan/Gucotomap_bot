@@ -2,6 +2,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from config_data.config import load_config
 from pymongo.collection import Collection
+from workers.logset import logger
 
 
 def create_connection() -> Collection:
@@ -11,8 +12,6 @@ def create_connection() -> Collection:
     Returns:
         A Collection object representing the 'users' collection in the MongoDB database.
     """
-
-    global client
 
     # Load the database configuration from the config file
     mongo_config = load_config()
@@ -32,9 +31,9 @@ def create_connection() -> Collection:
     # Send a ping to the MongoDB server to confirm a successful connection
     try:
         client.admin.command('ping')
-        print("Pinged your deployment. You successfully connected to MongoDB!")
-    except Exception as e:
-        print(e)
+        logger.info("Pinging MongoDB successfully")
+    except Exception:
+        logger.exception("Fail to ping MongoDB")
 
     # Get the 'user_db' database and the 'users' collection
     user_db = client.user_db
@@ -72,6 +71,7 @@ def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int = 5) -> N
 
         # Insert the new user document into the database
         user_collection.insert_one(new_user)
+        logger.info(f"Creating a new user id {user_id}")
     updates = {'$set': {
         'game': False,
         'attempts': ATTEMPTS,
@@ -83,6 +83,7 @@ def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int = 5) -> N
 
     }}
     user_collection.update_one(filter={"user_id": user_id}, update=updates)
+    logger.debug(f"Setting default game state for user id {user_id}")
 
 
 def setup_user_question(user_collection: Collection, user_id: int, town_name: str, town_values: dict, map_url: str, countries: tuple) -> None:
@@ -104,6 +105,7 @@ def setup_user_question(user_collection: Collection, user_id: int, town_name: st
         'countries': countries
     }}
     user_collection.update_one(filter={"user_id": user_id}, update=updates)
+    logger.debug(f"Initializing a user question for user id {user_id}")
 
 
 def start_user_game(user_collection: Collection, user_id: int) -> None:
@@ -118,6 +120,7 @@ def start_user_game(user_collection: Collection, user_id: int) -> None:
     # Set the 'game' field to True and reset the 'score' field to 0 for the specified user
     updates = {'$set': {'game': True, 'score': 0}}
     user_collection.update_one({"user_id": user_id}, update=updates)
+    logger.debug(f"Starting a new game for user id {user_id}")
 
 
 def check_user_game_status(user_collection: Collection, user_id: int) -> bool:
@@ -136,6 +139,7 @@ def check_user_game_status(user_collection: Collection, user_id: int) -> bool:
     user_dict = user_collection.find_one(filter={"user_id": user_id})
 
     # Check the value of the 'game' field in the user document
+    logger.debug(f"Checking if user id {user_id} is in a game")
     return user_dict['game']
 
 
@@ -151,6 +155,7 @@ def increase_user_score(user_collection: Collection, user_id: int) -> None:
     # Increment the 'score' field of the specified user by 1
     updates = {'$inc': {'score': 1}}
     user_collection.update_one({"user_id": user_id}, update=updates)
+    logger.debug(f"Incrementing the game score of user id {user_id}")
 
 
 def check_positive_attempts(user_collection: Collection, user_id: int) -> bool:
@@ -169,6 +174,7 @@ def check_positive_attempts(user_collection: Collection, user_id: int) -> bool:
     user_dict = user_collection.find_one(filter={"user_id": user_id})
 
     # Check the value of the 'attempts' field in the user document
+    logger.debug(f"Checking if user id {user_id} has any attempts left")
     return user_dict['attempts'] > 1
 
 
@@ -184,6 +190,7 @@ def decrease_user_attempts(user_collection: Collection, user_id: int) -> None:
     # Decrement the 'attempts' field of the specified user by 1
     updates = {'$inc': {'attempts': -1}}
     user_collection.update_one({"user_id": user_id}, update=updates)
+    logger.debug(f"Decrementing the number of attempts for user id {user_id}")
 
 
 def finish_user_game(user_collection: Collection, user_id: int, ATTEMPTS: int) -> None:
@@ -204,9 +211,9 @@ def finish_user_game(user_collection: Collection, user_id: int, ATTEMPTS: int) -
         'game': False, 'attempts': ATTEMPTS, 'score': 0}}
     if user_dict['score'] > user_dict['max_score']:
         updates['$set']['max_score'] = user_dict['score']
-
     # Apply the updates to the user document
     user_collection.update_one({"user_id": user_id}, update=updates)
+    logger.debug(f"Ending the game for user id {user_id} and updating their stats")
 
 
 def get_user_info(user_collection: Collection, user_id: int) -> dict:
@@ -235,4 +242,5 @@ def get_user_info(user_collection: Collection, user_id: int) -> dict:
     user_dict = user_collection.find_one(filter={"user_id": user_id})
 
     # Return the user's current score and number of attempts
+    logger.debug(f"Retrieving MongoDB values for user id {user_id}")
     return user_dict
