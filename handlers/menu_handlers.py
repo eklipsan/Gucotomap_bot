@@ -3,6 +3,8 @@ from aiogram.types import Message
 from keyboards.menu_keyboards import feedback_keyboard
 from access_filters.tg_filter import IsGame
 from workers.database import create_connection
+from workers.logset import logger
+
 
 router: Router = Router()
 # using user's status (game, not game) to access menu handlers
@@ -13,6 +15,7 @@ user_collection = create_connection()
 
 @router.message(F.text == 'Feedback')
 async def feedback_handler(message: Message):
+    user_id = message.from_user.id
     feedback_message = (
         "Thank you for reaching out regarding my Telegram bot! 😊\n"
         "I appreciate your interest and feedback.\n"
@@ -24,6 +27,8 @@ async def feedback_handler(message: Message):
     )
 
     await message.answer(feedback_message, reply_markup=feedback_keyboard)
+    logger.debug(f"User id {user_id} clicks on 'Feedback' button")
+
 
 
 @router.message(F.text == 'Statistic')
@@ -40,3 +45,4 @@ async def show_statistic(message: Message):
         "Thank you for playing and being part of the excitement! 🙌✨"
     )
     await message.answer(stat_text)
+    logger.debug(f"User id {user_id} click on 'Statistic' button")
