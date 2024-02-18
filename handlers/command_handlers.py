@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message
 from workers.database import init_user, create_connection
+from workers.logset import logger
 from keyboards.menu_keyboards import start_keyboard
 
 
@@ -20,10 +21,12 @@ async def start_handler(message: Message):
         'To start playing click on the Play button 🎮\n'
     )
     await message.answer(start_message, reply_markup=start_keyboard)
+    logger.debug(f"User id {user_id} clicks on '/start' button")
 
 
 @router.message(Command('help'))
 async def help_handler(message: Message):
+    user_id = message.from_user.id
     help_message = (
         'To start playing you need to tap "Play"\n\n'
         'The rules of this game📃\n'
@@ -36,17 +39,24 @@ async def help_handler(message: Message):
         'Have a good game🤗'
     )
     await message.answer(help_message)
+    logger.debug(f"User id {user_id} clicks on '/help' button")
 
 
 @router.message(Command('admin'))
 async def no_admin_show_manual(message: Message):
+    user_id = message.from_user.id
     manual_no_admin_message = (
-        'You do not have access to admin commands'
+        'You do not have access to admin commands😿\n'
+        'But there are hidden commands, available to you😁:\n'
+        '<code>Get user id</code> - show user\'s id'
     )
     await message.answer(manual_no_admin_message)
+    logger.debug(f"User id {user_id} clicks on negative '/admin' button")
 
 
 @router.message(F.text == 'Get user id')
 async def admin_get_user_id(message: Message):
-    user_id_info = f"Your user id: <code>{message.from_user.id}</code>"
+    user_id = message.from_user.id
+    user_id_info = f"Your user id: <code>{user_id}</code>"
     await message.answer(user_id_info)
+    logger.debug(f"User id {user_id} gets their user id")
