@@ -66,8 +66,10 @@ def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int = 5) -> N
             'town_name': '',
             'town_values': dict(),
             'map_url': '',
-            'map_invalid_response': False,
-            'countries': list()
+            'countries': list(),
+            'map_lang': 'en_US',
+            'map_scale': 1,
+            'map_size': 11
         }
 
         # Insert the new user document into the database
@@ -248,7 +250,10 @@ def get_user_info(user_collection: Collection, user_id: int) -> dict:
         town_name - str,
         town_values - dict,
         map_url - str,
-        countries - list
+        countries - list,
+        map_lang - str (default is 'en_US'),
+        map_scale - int (default is 1),
+        map_size - int (default is 11)
     """
 
     # Retrieve the user document from the database
