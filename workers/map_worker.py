@@ -12,6 +12,9 @@ import requests
 from dataclasses import dataclass
 from typing import Union
 from workers.logset import logger
+from pymongo.collection import Collection
+from workers.database import get_user_info
+
 
 
 @dataclass
@@ -85,14 +88,18 @@ def _receive_countries_set(right_country: str) -> tuple:
     return tuple(result_keyboard_set)
 
 
-def receive_quiz_setup() -> Union[ChosenTown, MapBox, tuple[str]]:
+def receive_quiz_setup(user_collection: Collection, user_id: int) -> Union[ChosenTown, MapBox, tuple[str]]:
     """
     Retrieves a random town, a map, and a set of countries for a quiz setup.
     """
     town = _receive_random_town()
+    user_dict = get_user_info(user_collection, user_id)
     map = _receive_map(
         longtitude=town.town_values['longtitude'],
-        latitude=town.town_values['latitude']
+        latitude=town.town_values['latitude'],
+        lang=user_dict['map_lang'],
+        scale=user_dict['map_scale'],
+        size=user_dict['map_size']
     )
     countries = _receive_countries_set(town.town_values['country'])
     logger.debug("Retriving a random town, its map, and a set of countries")
