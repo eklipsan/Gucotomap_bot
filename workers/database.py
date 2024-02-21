@@ -204,7 +204,7 @@ def decrease_user_attempts(user_collection: Collection, user_id: int) -> None:
     logger.debug(f"Decrementing the number of attempts for user id {user_id}")
 
 
-def finish_user_game(user_collection: Collection, user_id: int, ATTEMPTS: int) -> None:
+def finish_user_game(user_collection: Collection, user_id: int, ATTEMPTS: int, map_error: bool = False) -> None:
     """
     Ends the current game for the specified user and updates their statistics.
 
@@ -218,8 +218,10 @@ def finish_user_game(user_collection: Collection, user_id: int, ATTEMPTS: int) -
     user_dict = user_collection.find_one(filter={"user_id": user_id})
 
     # Update the user's statistics
-    updates = {'$inc': {'played_games': 1}, '$set': {
+    updates = {'$set': {
         'game': False, 'attempts': ATTEMPTS, 'score': 0}}
+    if map_error is False:
+        updates['$inc'] = {'played_games': 1}
     if user_dict['score'] > user_dict['max_score']:
         updates['$set']['max_score'] = user_dict['score']
     # Apply the updates to the user document

@@ -1,5 +1,5 @@
 from aiogram import Router, types, F
-from workers.map_worker import receive_quiz_setup
+from workers.map_worker import receive_quiz_setup, receive_pass_photo
 from keyboards.user_keyboards import create_keyboard_countries, lost_game_keyboard
 from keyboards.menu_keyboards import start_keyboard
 from access_filters.tg_filter import IsAdmin
@@ -35,20 +35,38 @@ async def setup_quiz(message: types.Message):
     """
     user_id = message.from_user.id
     town, map, countries = receive_quiz_setup()
-    setup_user_question(user_collection, user_id, town.town_name,
-                        town.town_values, map.url_link, countries)
+    setup_user_question(
+        user_collection,
+        user_id,
+        town.town_name,
+        town.town_values,
+        map.url_link,
+        map.invalid_response,
+        countries
+        )
     user_dict = get_user_info(user_collection, user_id)
     # These del line should reconsidered, because they take much space in logs
     del user_dict['_id']
     del user_dict['map_url']
-    keyboard = create_keyboard_countries(countries=user_dict['countries'])
-
-    await message.answer_photo(
-        map.url_link,
-        reply_markup=keyboard,
-        caption='What country is this?'
-    )
-    logger.debug(f"Sending a quiz to user id {user_id}")
+    if user_dict['map_invalid_response'] is True:
+        # If map does not load, send message with explanation and a dog photo
+        error_photo = receive_pass_photo()
+        finish_user_game(user_collection, user_id, ATTEMPTS, map_error=True)
+        await message.answer_photo(
+            error_photo,
+            caption="Sorry! The map has not loaded, but you can look at this cute dog🙏🏼",
+            reply_markup=start_keyboard
+            )
+        await message.answer("You are in the main menu, but you might try to play again now or later.")
+        logger.error(f"Map has not loaded for user id {user_id}")
+    else:
+        keyboard = create_keyboard_countries(countries=user_dict['countries'])
+        await message.answer_photo(
+            map.url_link,
+            reply_markup=keyboard,
+            caption='What country is this?'
+        )
+        logger.debug(f"Sending a quiz to user id {user_id}")
     logger.debug(f"{user_dict}")
 
 

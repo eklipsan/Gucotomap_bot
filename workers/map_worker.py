@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from typing import Union
 from workers.logset import logger
 
+
 @dataclass
 class ChosenTown:
     town_name: str
@@ -80,7 +81,7 @@ def _receive_countries_set(right_country: str) -> tuple:
     while len(result_keyboard_set) < 4:
         wrong_country = random.choice(countries_list)
         result_keyboard_set.add(wrong_country)
-    logger.debug(f"Generating a set of countries for a quiz setup")
+    logger.debug("Generating a set of countries for a quiz setup")
     return tuple(result_keyboard_set)
 
 
@@ -100,6 +101,7 @@ def receive_quiz_setup() -> Union[ChosenTown, MapBox, tuple[str]]:
 
 
 def receive_pass_photo() -> str:
+    "Receive a url of a random cute dog, that returns a photo format"
     url = r"https://random.dog/woof.json"
     js = requests.get(url).json()
     return js['url']
