@@ -97,3 +97,9 @@ def receive_quiz_setup() -> Union[ChosenTown, MapBox, tuple[str]]:
     logger.debug("Retriving a random town, its map, and a set of countries")
 
     return town, map, countries
+
+
+def receive_pass_photo() -> str:
+    url = r"https://random.dog/woof.json"
+    js = requests.get(url).json()
+    return js['url']
