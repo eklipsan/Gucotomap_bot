@@ -59,8 +59,9 @@ def _receive_map(longtitude: str,
         logger.debug("Retriving a map based on given coordinates")
         return map_box
     else:
+        map_box.url_link = url_link
         map_box.invalid_response = True
-        logger.error(f"Invalid response from the static maps server {map_box}")
+        logger.exception(f"Invalid response from the static maps server {map_box}")
         return map_box
 
 
