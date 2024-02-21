@@ -66,6 +66,7 @@ def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int = 5) -> N
             'town_name': '',
             'town_values': dict(),
             'map_url': '',
+            'map_invalid_response': False,
             'countries': list()
         }
 
@@ -86,7 +87,15 @@ def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int = 5) -> N
     logger.debug(f"Setting default game state for user id {user_id}")
 
 
-def setup_user_question(user_collection: Collection, user_id: int, town_name: str, town_values: dict, map_url: str, countries: tuple) -> None:
+def setup_user_question(
+        user_collection: Collection,
+        user_id: int,
+        town_name: str,
+        town_values: dict,
+        map_url: str,
+        map_invalid_response: bool,
+        countries: tuple
+        ) -> None:
     """
     Initializes a user question. It is adjacent function with setup_quiz.
 
@@ -96,12 +105,14 @@ def setup_user_question(user_collection: Collection, user_id: int, town_name: st
         town_name: The name of the place of shown country on the map.
         town_values: The dictionary with other information about the town.
         map_url: API-url from Static Yandex Map, that returns a map photo.
+        map_invalid_response: Boolean value if loading the map is not successful
         countries: Set of unique countries, where is one right answer.
     """
     updates = {'$set': {
         'town_name': town_name,
         'town_values': town_values,
         'map_url': map_url,
+        'map_invalid_response': map_invalid_response,
         'countries': countries
     }}
     user_collection.update_one(filter={"user_id": user_id}, update=updates)
