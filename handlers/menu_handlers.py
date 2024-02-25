@@ -1,8 +1,9 @@
 from aiogram import Router, F
 from aiogram.types import Message
 from keyboards.menu_keyboards import feedback_keyboard
+from keyboards.parameter_keyboards import parameter_menu
 from access_filters.tg_filter import IsGame
-from workers.database import create_connection
+from workers.database import create_connection, get_user_info
 from workers.logset import logger
 
 
@@ -30,7 +31,6 @@ async def feedback_handler(message: Message):
     logger.debug(f"User id {user_id} clicks on 'Feedback' button")
 
 
-
 @router.message(F.text == 'Statistic')
 # This function shows user their game statistic
 async def show_statistic(message: Message):
@@ -46,3 +46,17 @@ async def show_statistic(message: Message):
     )
     await message.answer(stat_text)
     logger.debug(f"User id {user_id} click on 'Statistic' button")
+
+
+@router.message(F.text == "Parameters")
+async def show_parameters(message: Message):
+    user_id = message.from_user.id
+    user_dict = get_user_info(user_collection, user_id)
+    parameters_text = (
+        "⚙ Here is your parameters! \n\n"
+        f"Your map language is {user_dict['map_lang']}\n"
+        f"Your map scale is {user_dict['map_scale']}\n"
+        f"Your map size is {user_dict['map_size']}"
+    )
+    await message.answer(parameters_text, reply_markup=parameter_menu)
+    logger.debug(f"User id {user_id} clicks on 'Parameters' button")
