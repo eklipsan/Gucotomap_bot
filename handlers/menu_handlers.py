@@ -1,7 +1,10 @@
 from aiogram import Router, F
 from aiogram.types import Message
 from keyboards.menu_keyboards import feedback_keyboard
-from keyboards.parameter_keyboards import parameter_menu
+from keyboards.parameter_keyboards import (
+    parameter_menu,
+    RETURN_PARAMETERS
+)
 from access_filters.tg_filter import IsGame
 from workers.database import create_connection, get_user_info
 from workers.logset import logger
@@ -48,7 +51,7 @@ async def show_statistic(message: Message):
     logger.debug(f"User id {user_id} click on 'Statistic' button")
 
 
-@router.message(F.text == "Parameters")
+@router.message((F.text == "Parameters") | (F.text == RETURN_PARAMETERS))
 async def show_parameters(message: Message):
     user_id = message.from_user.id
     user_dict = get_user_info(user_collection, user_id)
