@@ -3,7 +3,10 @@ from aiogram.types import Message
 from keyboards.menu_keyboards import feedback_keyboard
 from keyboards.parameter_keyboards import (
     parameter_menu,
-    RETURN_PARAMETERS
+    RETURN_PARAMETERS,
+    create_map_language_keyboard,
+    create_map_scale_keyboard,
+    create_map_size_keyboard
 )
 from access_filters.tg_filter import IsGame
 from workers.database import create_connection, get_user_info
@@ -63,3 +66,16 @@ async def show_parameters(message: Message):
     )
     await message.answer(parameters_text, reply_markup=parameter_menu)
     logger.debug(f"User id {user_id} clicks on 'Parameters' button")
+
+
+@router.message(F.text == 'Change map language')
+async def show_map_languages(message: Message):
+    user_id = message.from_user.id
+    map_language_text = (
+        'This option is used to display maps that are localized in various languages and reflect differences for specific countries.\n'
+        'For example, for the regions RU, UA, and TR, distance is shown in kilometers. For US, distance is shown in miles.\n\n'
+        '<b>Note</b>: The map language is set to English by default.\n'
+        'If you want to change the map language, you can choose from the following options:'
+    )
+    await message.answer(map_language_text, reply_markup=create_map_language_keyboard())
+    logger.debug(f"User id {user_id} clicks on 'Change map language' button")
