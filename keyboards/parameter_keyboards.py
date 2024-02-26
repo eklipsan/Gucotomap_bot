@@ -74,3 +74,24 @@ def create_map_scale_keyboard(start: int = 1, end: int = 5, adjust: int = 3) -> 
     builder.adjust(adjust)
     # return the keyboard as a markup with the option to resize
     return builder.as_markup(resize_keyboard=True)
+
+
+def create_map_size_keyboard(
+        start: int = 1,
+        end: int = 21,
+        adjust: int = 4
+        ) -> ReplyKeyboardMarkup:
+    """
+    Returns the keyboard that displays map sizes
+    """
+    # Initialize the keyboard builder
+    builder = ReplyKeyboardBuilder()
+    # Add buttons to the keyboard for each size
+    for number in range(start, end + 1):
+        builder.add(KeyboardButton(text=str(number)))
+    # Add a return parameters button
+    builder.add(KeyboardButton(text=RETURN_PARAMETERS))
+    # Adjust the keyboard layout
+    builder.adjust(adjust)
+    # Return the keyboard markup with resized keyboard
+    return builder.as_markup(resize_keyboard=True)
