@@ -79,3 +79,17 @@ async def show_map_languages(message: Message):
     )
     await message.answer(map_language_text, reply_markup=create_map_language_keyboard())
     logger.debug(f"User id {user_id} clicks on 'Change map language' button")
+
+
+@router.message(F.text == 'Change map scale')
+async def show_map_scale(message: Message):
+    user_id = message.from_user.id
+    map_scale_text = (
+        'This option allows you to change the size of objects on the map.\n'
+        'It increases the font size on labels and displays larger geographical objects (buildings, roads, bus stops, metro stations, and so on).\n'
+        'So it determines the coefficient for enlarging all objects on the map and takes fractional values from 1.0 to 4.0.\n\n'
+        '<b>Note</b>: The map scale is set to 1 by default.\n'
+        'If you want to change the map scale, you can choose from the following options:'
+    )
+    await message.answer(map_scale_text, reply_markup=create_map_scale_keyboard())
+    logger.debug(f"User id {user_id} clicks on 'Change map scale' button")
