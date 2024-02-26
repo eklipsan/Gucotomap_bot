@@ -93,3 +93,18 @@ async def show_map_scale(message: Message):
     )
     await message.answer(map_scale_text, reply_markup=create_map_scale_keyboard())
     logger.debug(f"User id {user_id} clicks on 'Change map scale' button")
+
+
+@router.message(F.text == 'Change map size')
+async def show_map_size(message: Message):
+    user_id = message.from_user.id
+    map_size_text = (
+        'This option determines the current resolution of the image from the map.\n'
+        'The parameter  can take integer values from 0 to 21.\n'
+        'When the zoom level is increased by one, the image resolution doubles.\n'
+        'At the zero zoom level, the map shows the entire world, while at the maximum zoom level, it shows a single building.\n\n'
+        '<b>Note</b>: The map size is set to 11 by default.\n'
+        'If you want to change the map scale, you can choose from the following options:'
+    )
+    await message.answer(map_size_text, reply_markup=create_map_size_keyboard())
+    logger.debug(f"User id {user_id} clicks on 'Change map size' button ")
