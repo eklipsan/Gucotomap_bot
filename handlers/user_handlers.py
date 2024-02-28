@@ -36,9 +36,6 @@ async def setup_quiz(message: types.Message):
     """
     user_id = message.from_user.id
     town, map, countries = receive_quiz_setup(user_collection, user_id)
-    setup_user_question(user_collection, user_id, town.town_name,
-                        town.town_values, map.url_link, countries)
-    town, map, countries = receive_quiz_setup()
     setup_user_question(
         user_collection,
         user_id,
