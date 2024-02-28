@@ -3,6 +3,7 @@ from pymongo.server_api import ServerApi
 from config_data.config import load_config
 from pymongo.collection import Collection
 from workers.logset import logger
+from typing import Literal
 
 
 def create_connection() -> Collection:
@@ -262,3 +263,37 @@ def get_user_info(user_collection: Collection, user_id: int) -> dict:
     # Return the user's current score and number of attempts
     logger.debug(f"Retrieving MongoDB values for user id {user_id}")
     return user_dict
+
+
+def set_user_parameter_state(
+        user_collection: Collection,
+        user_id: int,
+        map_option: Literal['', 'lang', 'scale', 'size']
+        ) -> None:
+    """
+    Update the parameter state of a user in the user_collection.
+
+    Parameters:
+    - user_collection (Collection): The collection where user information is stored.
+    - user_id (int): The unique identifier of the user.
+    - map_option (Literal['', 'lang', 'scale', 'size']): The option to update the user's parameter state.
+
+    If the map_option is valid (empty string, 'lang', 'scale', or 'size'), the function updates the user's parameter state
+    in the user_collection and logs the update. If the map_option is invalid, an error is logged.
+
+    """
+    # Check if map_option is valid
+    if map_option in ['', 'lang', 'scale', 'size']:
+        # Prepare update
+        updates = {'$set': {
+            'parameter_state': map_option
+        }}
+        # Update user's parameter state
+        user_collection.update_one(filter={"user_id": user_id}, update=updates)
+        # Log the update
+        logger.debug(f"User id {user_id} updates his parameter state to option {map_option}")
+    else:
+        # Log error for invalid map_option
+        logger.error(f"User id {user_id} tries to update his parameter state to wrong option {map_option}")
+
+
