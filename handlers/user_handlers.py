@@ -13,7 +13,8 @@ from workers.database import (
     increase_user_score,
     get_user_info,
     decrease_user_attempts,
-    finish_user_game
+    finish_user_game,
+    set_user_parameter_state
 )
 
 
@@ -149,6 +150,8 @@ async def cancel_game(message: types.Message):
 async def get_main_menu(message: types.Message):
     "Message handler that displays a message indicating that the user is in the main menu."
     user_id = message.from_user.id
+    # Set map parameter to '' to not let user change parameters when they are in the main menu
+    set_user_parameter_state(user_collection, user_id, map_option='')
     await message.answer(
         "You are in the main menu",
         reply_markup=start_keyboard

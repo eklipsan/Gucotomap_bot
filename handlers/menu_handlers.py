@@ -9,7 +9,7 @@ from keyboards.parameter_keyboards import (
     create_map_size_keyboard
 )
 from access_filters.tg_filter import IsGame
-from workers.database import create_connection, get_user_info
+from workers.database import create_connection, get_user_info, set_user_parameter_state
 from workers.logset import logger
 
 
@@ -57,6 +57,7 @@ async def show_statistic(message: Message):
 @router.message((F.text == "Parameters") | (F.text == RETURN_PARAMETERS))
 async def show_parameters(message: Message):
     user_id = message.from_user.id
+    set_user_parameter_state(user_collection, user_id, map_option='')
     user_dict = get_user_info(user_collection, user_id)
     parameters_text = (
         "⚙ Here is your parameters! \n\n"
@@ -71,6 +72,7 @@ async def show_parameters(message: Message):
 @router.message(F.text == 'Change map language')
 async def show_map_languages(message: Message):
     user_id = message.from_user.id
+    set_user_parameter_state(user_collection, user_id, map_option='lang')
     map_language_text = (
         'This option is used to display maps that are localized in various languages and reflect differences for specific countries.\n'
         'For example, for the regions RU, UA, and TR, distance is shown in kilometers. For US, distance is shown in miles.\n\n'
@@ -84,6 +86,7 @@ async def show_map_languages(message: Message):
 @router.message(F.text == 'Change map scale')
 async def show_map_scale(message: Message):
     user_id = message.from_user.id
+    set_user_parameter_state(user_collection, user_id, map_option='scale')
     map_scale_text = (
         'This option allows you to change the size of objects on the map.\n'
         'It increases the font size on labels and displays larger geographical objects (buildings, roads, bus stops, metro stations, and so on).\n'
@@ -98,6 +101,7 @@ async def show_map_scale(message: Message):
 @router.message(F.text == 'Change map size')
 async def show_map_size(message: Message):
     user_id = message.from_user.id
+    set_user_parameter_state(user_collection, user_id, map_option='size')
     map_size_text = (
         'This option determines the current resolution of the image from the map.\n'
         'The parameter  can take integer values from 0 to 21.\n'
