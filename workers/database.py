@@ -297,3 +297,45 @@ def set_user_parameter_state(
         logger.error(f"User id {user_id} tries to update his parameter state to wrong option {map_option}")
 
 
+def set_user_map_language(
+        user_collection: Collection,
+        user_id: int,
+        map_language: str
+        ) -> bool:
+    """
+    Sets the map language for a specific user in the user_collection.
+
+    Parameters:
+    - user_collection (Collection): The collection where user documents are stored.
+    - user_id (int): The unique identifier of the user.
+    - map_language (str): The new map language to set for the user.
+
+    If the user's parameter state is 'lang', the function updates the user's map language to the specified value.
+    If the user's parameter state is not 'lang', an error is logged, and the function returns False.
+    The function logs the successful setting of the map language option.
+    """
+    # Find the user document in the collection
+    user_dict = user_collection.find_one(filter={"user_id": user_id})
+
+    # Get the existing map language and parameter state from the user document
+    ex_map_lang = user_dict['map_lang']
+    state = user_dict['parameter_state']
+
+    # Check if the parameter state is 'lang'
+    if state == 'lang':
+        # Prepare the updates to be applied to the user document
+        updates = {'$set': {
+            'parameter_state': '',
+            'map_lang': map_language
+        }}
+
+        # Apply the updates to the user document
+        user_collection.update_one({"user_id": user_id}, update=updates)
+    else:
+        # Log an error if user tries to change map language with an invalid state
+        logger.error(f"User id {user_id} tries to change map language with state {state}")
+        return False
+
+    # Log the successful setting of map language option
+    logger.debug(f"Setting map language option for user id {user_id} from {ex_map_lang} to {map_language}")
+    return True
