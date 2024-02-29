@@ -8,6 +8,7 @@ from handlers import (menu_handlers,
 from workers.menu import set_main_menu
 from workers.logset import logger, get_log_state
 import asyncio
+from time import sleep
 
 
 async def main():
@@ -43,8 +44,13 @@ async def main():
     logger.debug("Setting main menu")
     await set_main_menu(bot)
     logger.debug("Starting polling")
-    await dp.start_polling(bot)
+    await dp.start_polling(bot, none_stop=True)
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except Exception:
+        logger.exception("The bot has stopped!")
+        sleep(3)
+        asyncio.run(main())
