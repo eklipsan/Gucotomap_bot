@@ -4,12 +4,18 @@ from keyboards.menu_keyboards import feedback_keyboard
 from keyboards.parameter_keyboards import (
     parameter_menu,
     RETURN_PARAMETERS,
+    map_lang_dict,
     create_map_language_keyboard,
     create_map_scale_keyboard,
     create_map_size_keyboard
 )
 from access_filters.tg_filter import IsGame
-from workers.database import create_connection, get_user_info, set_user_parameter_state
+from workers.database import (
+    create_connection,
+    get_user_info,
+    set_user_parameter_state,
+    set_user_map_language
+)
 from workers.logset import logger
 
 
@@ -112,3 +118,14 @@ async def show_map_size(message: Message):
     )
     await message.answer(map_size_text, reply_markup=create_map_size_keyboard())
     logger.debug(f"User id {user_id} clicks on 'Change map size' button ")
+
+
+@router.message(lambda message: message.text in map_lang_dict.keys())
+async def change_map_language(message: Message):
+    user_id = message.from_user.id
+    new_map_parameter = map_lang_dict[message.text]
+    result = set_user_map_language(user_collection, user_id, new_map_parameter)
+    if result:
+        await message.answer(f"Map language has been changed to <b>{new_map_parameter}</b>", reply_markup=parameter_menu)
+    else:
+        await message.answer(f"Something went wrong with changing map")
