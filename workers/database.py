@@ -339,3 +339,47 @@ def set_user_map_language(
     # Log the successful setting of map language option
     logger.debug(f"Setting map language option for user id {user_id} from {ex_map_lang} to {map_language}")
     return True
+
+
+def set_user_map_scale(
+        user_collection: Collection,
+        user_id: int,
+        map_scale: float
+        ) -> bool:
+    """
+    Sets the map scale for a specific user in the user_collection.
+
+    Parameters:
+    - user_collection (Collection): The collection where user documents are stored.
+    - user_id (int): The unique identifier of the user.
+    - map_scale (float): The new map scale to set for the user.
+
+    If the user's parameter state is 'scale', the function updates the user's map scale to the specified value.
+    If the user's parameter state is not 'scale', an error is logged, and the function returns False.
+    The function logs the successful setting of the map scale option.
+    """
+    # Find the user document in the collection
+    user_dict = user_collection.find_one(filter={"user_id": user_id})
+
+    # Get the existing map scale and parameter state from the user document
+    ex_map_scale = user_dict['map_scale']
+    state = user_dict['parameter_state']
+
+    # Check if the parameter state is 'scale'
+    if state == 'scale':
+        # Prepare the updates to be applied to the user document
+        updates = {'$set': {
+            'parameter_state': '',
+            'map_scale': map_scale
+        }}
+
+        # Apply the updates to the user document
+        user_collection.update_one({"user_id": user_id}, update=updates)
+    else:
+        # Log an error if user tries to change map scale with an invalid state
+        logger.error(f"User id {user_id} tries to change map scale with state {state}")
+        return False
+
+    # Log the successful setting of map scale option
+    logger.debug(f"Setting map scale option for user id {user_id} from {ex_map_scale} to {map_scale}")
+    return True
