@@ -5,6 +5,7 @@ from keyboards.parameter_keyboards import (
     parameter_menu,
     RETURN_PARAMETERS,
     map_lang_dict,
+    generate_scale_range,
     create_map_language_keyboard,
     create_map_scale_keyboard,
     create_map_size_keyboard
@@ -14,7 +15,8 @@ from workers.database import (
     create_connection,
     get_user_info,
     set_user_parameter_state,
-    set_user_map_language
+    set_user_map_language,
+    set_user_map_scale
 )
 from workers.logset import logger
 
@@ -127,5 +129,12 @@ async def change_map_language(message: Message):
     result = set_user_map_language(user_collection, user_id, new_map_parameter)
     if result:
         await message.answer(f"Map language has been changed to <b>{new_map_parameter}</b>", reply_markup=parameter_menu)
-    else:
-        await message.answer(f"Something went wrong with changing map")
+
+
+@router.message(lambda message: message.text in generate_scale_range())
+async def change_map_scale(message: Message):
+    user_id = message.from_user.id
+    new_map_parameter = float(message.text)
+    result = set_user_map_scale(user_collection, user_id, new_map_parameter)
+    if result:
+        await message.answer(f"Map scale has been changed to <b>{new_map_parameter}</b>", reply_markup=parameter_menu)
