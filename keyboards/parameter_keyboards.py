@@ -48,11 +48,11 @@ def create_map_language_keyboard() -> ReplyKeyboardMarkup:
     return builder.as_markup(resize_keyboard=True)
 
 
-def _generate_scale_range(start: int = 1, end: int = 4) -> list:
-    "Generate range of scales options for map settings with step 0.5"
+def generate_scale_range(start: int = 1, end: int = 4) -> list:
+    "Generate range of string-type scales options for map settings with step 0.5"
     result = list()
     while start <= end:
-        result.append(start)
+        result.append(str(start))
         start += 0.5
     return result
 
@@ -64,7 +64,7 @@ def create_map_scale_keyboard(start: int = 1, end: int = 5, adjust: int = 3) -> 
     # Initialize the keyboard builder
     builder = ReplyKeyboardBuilder()
     # Create number list from function with step 0.5
-    scale_list = _generate_scale_range()
+    scale_list = generate_scale_range()
     # Add buttons to the keyboard for each scale
     for number in scale_list:
         builder.add(KeyboardButton(text=str(number)))
