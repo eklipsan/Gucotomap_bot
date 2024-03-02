@@ -51,7 +51,7 @@ def create_map_language_keyboard() -> ReplyKeyboardMarkup:
 def generate_scale_range() -> list:
     "Generate range of string-type scales options for map settings with step 0.5"
     result = list()
-    start = 1
+    start = 1.0
     while start <= 4:
         result.append(str(start))
         start += 0.5
