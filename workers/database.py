@@ -383,3 +383,47 @@ def set_user_map_scale(
     # Log the successful setting of map scale option
     logger.debug(f"Setting map scale option for user id {user_id} from {ex_map_scale} to {map_scale}")
     return True
+
+
+def set_user_map_size(
+        user_collection: Collection,
+        user_id: int,
+        map_size: int
+        ) -> bool:
+    """
+    Sets the map size for a specific user in the user_collection.
+
+    Parameters:
+    - user_collection (Collection): The collection where user documents are stored.
+    - user_id (int): The unique identifier of the user.
+    - map_size (int): The new map size to set for the user.
+
+    If the user's parameter state is 'size', the function updates the user's map size to the specified value.
+    If the user's parameter state is not 'size', an error is logged, and the function returns False.
+    The function logs the successful setting of the map size option.
+    """
+    # Find the user document in the collection
+    user_dict = user_collection.find_one(filter={"user_id": user_id})
+
+    # Get the existing map scale and parameter state from the user document
+    ex_map_size = user_dict['map_size']
+    state = user_dict['parameter_state']
+
+    # Check if the parameter state is 'size'
+    if state == 'size':
+        # Prepare the updates to be applied to the user document
+        updates = {'$set': {
+            'parameter_state': '',
+            'map_size': map_size
+        }}
+
+        # Apply the updates to the user document
+        user_collection.update_one({"user_id": user_id}, update=updates)
+    else:
+        # Log an error if user tries to change map size with an invalid state
+        logger.error(f"User id {user_id} tries to change map size with state {state}")
+        return False
+
+    # Log the successful setting of map scale option
+    logger.debug(f"Setting map size option for user id {user_id} from {ex_map_size} to {map_size}")
+    return True
