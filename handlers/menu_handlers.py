@@ -6,6 +6,7 @@ from keyboards.parameter_keyboards import (
     RETURN_PARAMETERS,
     map_lang_dict,
     generate_scale_range,
+    generate_size_range,
     create_map_language_keyboard,
     create_map_scale_keyboard,
     create_map_size_keyboard
@@ -16,7 +17,8 @@ from workers.database import (
     get_user_info,
     set_user_parameter_state,
     set_user_map_language,
-    set_user_map_scale
+    set_user_map_scale,
+    set_user_map_size
 )
 from workers.logset import logger
 
@@ -138,3 +140,12 @@ async def change_map_scale(message: Message):
     result = set_user_map_scale(user_collection, user_id, new_map_parameter)
     if result:
         await message.answer(f"Map scale has been changed to <b>{new_map_parameter}</b>", reply_markup=parameter_menu)
+
+
+@router.message(lambda message: message.text in generate_size_range())
+async def change_map_size(message: Message):
+    user_id = message.from_user.id
+    new_map_parameter = int(message.text)
+    result = set_user_map_size(user_collection, user_id, new_map_parameter)
+    if result:
+        await message.answer(f"Map size has been changed to <b>{new_map_parameter}</b>", reply_markup=parameter_menu)
