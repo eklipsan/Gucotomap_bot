@@ -5,7 +5,7 @@ Gucotomomap is basically an acronym for "Guess the country by the town on the ma
 
 You can play it right now by clicking on the following link https://t.me/gucotomap_bot
 
-![](examples/gameplay.gif)
+![](readme_files/gameplay.gif)
 
 
 
@@ -27,9 +27,9 @@ This project is a telegram bot that offers to play a game where you have to gues
 https://static-maps.yandex.ru/v1?ll=37.620070,55.753630&size=450,450&z=13&pt=37.620070,55.753630,pmwtm1~37.64,55.76363,pmwtm99&apikey=YOUR_API_KEY
 ```
 Sample of API-request's result
-![](examples/Delhi.png)
-![](examples/Guangzhou.png)
-![](examples/Jakarta.png)
+![](readme_files/map_photos//Delhi.png "India, Delhi")
+![](readme_files/map_photos/Guangzhou.png "China, Guangzhou")
+![](readme_files/map_photos/Jakarta.png "Indonesia, Jakarta")
 
 ## Bot logic
 
@@ -40,7 +40,7 @@ Sample of API-request's result
     - database.py - simplifies work with user data from cloud MongoDB
     - logset.py - creates logs of the bot's work. There are logging options in .env.example file
 - map_data - stores json format file, where a city is represented like dictionary. For example:
-```
+```json
 "Tokyo": {
         "latitude": 35.6897,
         "longtitude": 139.6922,

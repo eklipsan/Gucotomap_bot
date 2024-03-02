@@ -5,7 +5,7 @@ Gucotomomap - это по сути аббревиатура от "Guess the coun
 
 Вы можете поиграть в нее прямо сейчас, перейдя по следующей ссылке https://t.me/gucotomap_bot
 
-![](examples/gameplay.gif)
+![](readme_files/gameplay.gif)
 
 
 
@@ -27,10 +27,9 @@ Gucotomomap - это по сути аббревиатура от "Guess the coun
 https://static-maps.yandex.ru/v1?ll=37.620070,55.753630&size=450,450&z=13&pt=37.620070,55.753630,pmwtm1~37.64,55.76363,pmwtm99&apikey=YOUR_API_KEY
 ```
 Образец результата API-запроса
-![](examples/Delhi.png)
-![](examples/Guangzhou.png)
-![](examples/Jakarta.png)
-
+![](readme_files/map_photos//Delhi.png "India, Delhi")
+![](readme_files/map_photos/Guangzhou.png "China, Guangzhou")
+![](readme_files/map_photos/Jakarta.png "Indonesia, Jakarta")
 ## Логика работы бота
 
 - bot.py - связывает все компоненты и запускает бота
@@ -40,7 +39,7 @@ https://static-maps.yandex.ru/v1?ll=37.620070,55.753630&size=450,450&z=13&pt=37.
     - database.py - упрощает работу с пользовательскими данными из облачной MongoDB
     - logset.py - производит логирование работы бота. Логирование можно настроить через .env файл
 - map_data - хранит файл формата json, в котором город представлен как словарь. Например:
-```
+```json
 "Tokyo": {
         "широта": 35.6897,
         "longtitude": 139.6922,
