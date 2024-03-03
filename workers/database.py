@@ -70,7 +70,10 @@ def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int = 5) -> N
             'countries': list(),
             'map_lang': 'en_US',
             'map_scale': 1,
-            'map_size': 11
+            'map_size': 11,
+            'map_invalid_response': False,
+            'parameter_state': ''
+
         }
 
         # Insert the new user document into the database
@@ -83,7 +86,9 @@ def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int = 5) -> N
         'town_name': '',
         'town_values': dict(),
         'map_url': '',
-        'countries': list()
+        'countries': list(),
+        'map_invalid_response': False,
+        'parameter_state': ''
 
     }}
     user_collection.update_one(filter={"user_id": user_id}, update=updates)

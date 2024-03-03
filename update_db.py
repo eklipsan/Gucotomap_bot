@@ -5,10 +5,8 @@ cur = con.find({})
 for user in cur:
     if user.get("user_id", None) is not None:
         user_id = user['user_id']
-        updates = {'$set': {
-              'map_lang': 'en_US',
-              'map_scale': 1,
-              'map_size': 11
+        updates = {'$unset': {
+            'map_invalid_state': 1
         }}
         con.update_one(filter={"user_id": user_id}, update=updates)
 
