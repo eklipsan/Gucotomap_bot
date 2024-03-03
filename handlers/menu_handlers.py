@@ -67,7 +67,7 @@ async def show_statistic(message: Message):
 @router.message((F.text == "Parameters") | (F.text == RETURN_PARAMETERS))
 async def show_parameters(message: Message):
     user_id = message.from_user.id
-    set_user_parameter_state(user_collection, user_id, map_option='')
+    set_user_parameter_state(user_collection, user_id, map_option='parameter')
     user_dict = get_user_info(user_collection, user_id)
     parameters_text = (
         "⚙ Here is your parameters! \n\n"

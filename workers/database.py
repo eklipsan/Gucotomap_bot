@@ -273,7 +273,7 @@ def get_user_info(user_collection: Collection, user_id: int) -> dict:
 def set_user_parameter_state(
         user_collection: Collection,
         user_id: int,
-        map_option: Literal['', 'lang', 'scale', 'size']
+        map_option: Literal['', 'parameter', 'lang', 'scale', 'size']
         ) -> None:
     """
     Update the parameter state of a user in the user_collection.
@@ -288,7 +288,7 @@ def set_user_parameter_state(
 
     """
     # Check if map_option is valid
-    if map_option in ['', 'lang', 'scale', 'size']:
+    if map_option in ['', 'parameter', 'lang', 'scale', 'size']:
         # Prepare update
         updates = {'$set': {
             'parameter_state': map_option
