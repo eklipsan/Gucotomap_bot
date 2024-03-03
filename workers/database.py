@@ -330,7 +330,7 @@ def set_user_map_language(
     if state == 'lang':
         # Prepare the updates to be applied to the user document
         updates = {'$set': {
-            'parameter_state': '',
+            'parameter_state': 'parameter',
             'map_lang': map_language
         }}
 
@@ -374,7 +374,7 @@ def set_user_map_scale(
     if state == 'scale':
         # Prepare the updates to be applied to the user document
         updates = {'$set': {
-            'parameter_state': '',
+            'parameter_state': 'parameter',
             'map_scale': map_scale
         }}
 
@@ -418,7 +418,7 @@ def set_user_map_size(
     if state == 'size':
         # Prepare the updates to be applied to the user document
         updates = {'$set': {
-            'parameter_state': '',
+            'parameter_state': 'parameter',
             'map_size': map_size
         }}
 

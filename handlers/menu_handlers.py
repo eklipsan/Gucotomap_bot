@@ -1,6 +1,6 @@
 from aiogram import Router, F
 from aiogram.types import Message
-from keyboards.menu_keyboards import feedback_keyboard
+from keyboards.menu_keyboards import feedback_keyboard, start_keyboard
 from keyboards.parameter_keyboards import (
     parameter_menu,
     RETURN_PARAMETERS,
@@ -149,3 +149,16 @@ async def change_map_size(message: Message):
     result = set_user_map_size(user_collection, user_id, new_map_parameter)
     if result:
         await message.answer(f"Map size has been changed to <b>{new_map_parameter}</b>", reply_markup=parameter_menu)
+
+
+@router.message(F.text == "Go to main menu")
+async def get_main_menu(message: Message):
+    "Message handler that displays a message indicating that the user is in the main menu."
+    user_id = message.from_user.id
+    # Set map parameter to '' to not let user change parameters when they are in the main menu
+    set_user_parameter_state(user_collection, user_id, map_option='')
+    await message.answer(
+        "You are in the main menu",
+        reply_markup=start_keyboard
+    )
+    logger.debug(f"Going to the main menu for user id {user_id}")

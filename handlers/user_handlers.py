@@ -2,7 +2,7 @@ from aiogram import Router, types, F
 from workers.map_worker import receive_quiz_setup, receive_pass_photo
 from keyboards.user_keyboards import create_keyboard_countries, lost_game_keyboard
 from keyboards.menu_keyboards import start_keyboard
-from access_filters.tg_filter import IsAdmin
+from access_filters.tg_filter import IsAdmin, IsParameterStateEmpty
 from workers.logset import logger
 from workers.database import (
     create_connection,
@@ -13,12 +13,12 @@ from workers.database import (
     increase_user_score,
     get_user_info,
     decrease_user_attempts,
-    finish_user_game,
-    set_user_parameter_state
+    finish_user_game
 )
 
 
 router: Router = Router()
+router.message.filter(IsParameterStateEmpty())
 
 
 # Set up variables to keep track of the user's game state,
@@ -141,19 +141,6 @@ async def cancel_game(message: types.Message):
         reply_markup=start_keyboard
     )
     logger.debug(f"User id {user_id} cancels the game")
-
-
-@router.message(F.text == "Go to main menu")
-async def get_main_menu(message: types.Message):
-    "Message handler that displays a message indicating that the user is in the main menu."
-    user_id = message.from_user.id
-    # Set map parameter to '' to not let user change parameters when they are in the main menu
-    set_user_parameter_state(user_collection, user_id, map_option='')
-    await message.answer(
-        "You are in the main menu",
-        reply_markup=start_keyboard
-    )
-    logger.debug(f"Going to the main menu for user id {user_id}")
 
 
 @router.message(IsAdmin() and F.text == 'Get answer')
