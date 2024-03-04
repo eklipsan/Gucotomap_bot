@@ -81,13 +81,13 @@ def generate_size_range() -> list:
     "Generate range of string-type sizes options for map settings"
     result = list()
     start = 1
-    while start <= 21:
+    while start <= 12:
         result.append(str(start))
         start += 1
     return result
 
 
-def create_map_size_keyboard(adjust: int = 4) -> ReplyKeyboardMarkup:
+def create_map_size_keyboard(adjust: int = 3) -> ReplyKeyboardMarkup:
     """
     Returns the keyboard that displays map sizes
     """

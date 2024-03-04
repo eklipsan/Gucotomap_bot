@@ -119,12 +119,11 @@ async def show_map_size(message: Message):
     user_id = message.from_user.id
     set_user_parameter_state(user_collection, user_id, map_option='size')
     map_size_text = (
-        'This option determines the current resolution of the image from the map.\n'
-        'The parameter  can take integer values from 0 to 21.\n'
-        'When the zoom level is increased by one, the image resolution doubles.\n'
-        'At the zero zoom level, the map shows the entire world, while at the maximum zoom level, it shows a single building.\n\n'
-        '<b>Note</b>: The map size is set to 11 by default.\n'
-        'If you want to change the map scale, you can choose from the following options:'
+        '🌟 Ready to fine-tune your map\'s view? This setting lets you adjust the image resolution to make every detail count.\n'
+        'You can pick any value between 0 and 12, where each increase in zoom level sharpens your map\'s resolution twofold.\n'
+        'At a glance, zoom level 0 gives you a world view, while higher values zoom in closer.\n\n'
+        '<b>Heads up</b>: Your map size is set to 11 to start for comfortable gaming\n'
+        'Eager for a change? Dive into the options below to adjust your map size:'
     )
     await message.answer(map_size_text, reply_markup=create_map_size_keyboard())
     logger.debug(f"User id {user_id} clicks on 'Change map size' button ")
