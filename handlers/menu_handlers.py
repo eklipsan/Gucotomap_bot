@@ -70,10 +70,11 @@ async def show_parameters(message: Message):
     set_user_parameter_state(user_collection, user_id, map_option='parameter')
     user_dict = get_user_info(user_collection, user_id)
     parameters_text = (
-        "⚙ Here is your parameters! \n\n"
-        f"Your map language is {user_dict['map_lang']}\n"
-        f"Your map scale is {user_dict['map_scale']}\n"
-        f"Your map size is {user_dict['map_size']}"
+        "⚙️ Welcome to your personalized settings! 🌈\n\n"
+        f"🗣️ Map Language: {user_dict['map_lang']}\n"
+        f"🔍 Map Scale: {user_dict['map_scale']}\n"
+        f"📏 Map Size: {user_dict['map_size']}\n\n"
+        "Everything is set just the way you like it! Feel free to adjust these settings anytime to enhance your experience. 😊"
     )
     await message.answer(parameters_text, reply_markup=parameter_menu)
     logger.debug(f"User id {user_id} clicks on 'Parameters' button")
@@ -135,7 +136,11 @@ async def change_map_language(message: Message):
     new_map_parameter = map_lang_dict[message.text]
     result = set_user_map_language(user_collection, user_id, new_map_parameter)
     if result:
-        await message.answer(f"Map language has been changed to <b>{new_map_parameter}</b>", reply_markup=parameter_menu)
+        await message.answer(
+            f"🌍✨ Your map language has been updated to <b>{new_map_parameter}</b>! Explore the world in your preferred language.",
+            reply_markup=parameter_menu
+        )
+    logger.debug(f"User id {user_id} changes map language to {new_map_parameter}")
 
 
 @router.message(lambda message: message.text in generate_scale_range())
@@ -144,7 +149,11 @@ async def change_map_scale(message: Message):
     new_map_parameter = float(message.text)
     result = set_user_map_scale(user_collection, user_id, new_map_parameter)
     if result:
-        await message.answer(f"Map scale has been changed to <b>{new_map_parameter}</b>", reply_markup=parameter_menu)
+        await message.answer(
+            f"🔍🌐 Your map scale is now set to <b>{new_map_parameter}</b>! Get ready to zoom in and discover new details.",
+            reply_markup=parameter_menu
+        )
+    logger.debug(f"User id {user_id} changes map scale to {new_map_parameter}")
 
 
 @router.message(lambda message: message.text in generate_size_range())
@@ -153,17 +162,19 @@ async def change_map_size(message: Message):
     new_map_parameter = int(message.text)
     result = set_user_map_size(user_collection, user_id, new_map_parameter)
     if result:
-        await message.answer(f"Map size has been changed to <b>{new_map_parameter}</b>", reply_markup=parameter_menu)
+        await message.answer(
+            f"🖼️🔎 Your map's resolution is now adjusted to <b>{new_map_parameter}</b>! Enjoy the clearer views on your adventures.",
+            reply_markup=parameter_menu
+        )
+    logger.debug(f"User id {user_id} changes map size to {new_map_parameter}")
 
 
 @router.message(F.text == "Go to main menu")
 async def get_main_menu(message: Message):
-    "Message handler that displays a message indicating that the user is in the main menu."
     user_id = message.from_user.id
-    # Set map parameter to '' to not let user change parameters when they are in the main menu
     set_user_parameter_state(user_collection, user_id, map_option='')
     await message.answer(
-        "You are in the main menu",
+        "🏠 Welcome back to the main menu! What would you like to do next?",
         reply_markup=start_keyboard
     )
     logger.debug(f"Going to the main menu for user id {user_id}")
