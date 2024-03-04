@@ -86,8 +86,14 @@ async def show_map_languages(message: Message):
     map_language_text = (
         'This option is used to display maps that are localized in various languages and reflect differences for specific countries.\n'
         'For example, for the regions RU, UA, and TR, distance is shown in kilometers. For US, distance is shown in miles.\n\n'
-        '<b>Note</b>: The map language is set to English by default.\n'
-        'If you want to change the map language, you can choose from the following options:'
+        'If you want to change the map language, you can choose from the following options:\n'
+        '1. 🇷🇺 Russian: ru_RU\n'
+        '2. 🇺🇸 English-USA: en_US\n'
+        '3. 🇷🇺 🇺🇸 English-Russian: en_RU\n'
+        '4. 🇷🇺 🇺🇦 Russian-Ukranian: ru_UA\n'
+        '5. 🇺🇦 Ukranian: uk_UA\n'
+        '6. 🇹🇷 Turkish: tr_TR\n\n'
+        '<b>Note</b>: The map language is set to 🇺🇸 English-USA by default.'
     )
     await message.answer(map_language_text, reply_markup=create_map_language_keyboard())
     logger.debug(f"User id {user_id} clicks on 'Change map language' button")
