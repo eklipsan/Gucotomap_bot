@@ -104,11 +104,11 @@ async def show_map_scale(message: Message):
     user_id = message.from_user.id
     set_user_parameter_state(user_collection, user_id, map_option='scale')
     map_scale_text = (
-        'This option allows you to change the size of objects on the map.\n'
-        'It increases the font size on labels and displays larger geographical objects (buildings, roads, bus stops, metro stations, and so on).\n'
-        'So it determines the coefficient for enlarging all objects on the map and takes fractional values from 1.0 to 4.0.\n\n'
-        '<b>Note</b>: The map scale is set to 1.0 by default.\n'
-        'If you want to change the map scale, you can choose from the following options:'
+        'Ready to see the world a bit differently? 🌍✨\n'
+        'Adjusting the map scale lets you zoom in on the details or zoom out for the bigger picture. It’s like having a magnifying glass for everything from street signs to entire cities!\n'
+        'You can set the zoom level anywhere from a close-up 1.0 to a wide-angle 3.5.\n\n'
+        '<b>Note</b>: We start you off at a comfortable 1.0 zoom. Ready to explore?\n'
+        'Pick your preferred scale from the options below and let the adventure begin!'
     )
     await message.answer(map_scale_text, reply_markup=create_map_scale_keyboard())
     logger.debug(f"User id {user_id} clicks on 'Change map scale' button")
