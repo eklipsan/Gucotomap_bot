@@ -432,3 +432,36 @@ def set_user_map_size(
     # Log the successful setting of map scale option
     logger.debug(f"Setting map size option for user id {user_id} from {ex_map_size} to {map_size}")
     return True
+
+
+def reset_map_parameters(
+        user_collection: Collection,
+        user_id: int
+        ) -> bool:
+    """
+    Reset the map parameters for a specific user in the user_collection.
+
+    Parameters:
+    - user_collection (Collection): The collection where user documents are stored.
+    - user_id (int): The unique identifier of the user.
+
+    1. The function resets the user's parameter state to an empty string.
+    2. The map language is set to 'en_US'
+    3. The map scale is set to 1.0
+    4. The map size is set to 11
+    """
+    user_dict = user_collection.find_one(filter={"user_id": user_id})
+
+    if user_dict['parameter_state'] == 'parameter':
+        # Prepare the updates to be applied to the user document
+        updates = {'$set': {
+            'parameter_state': '',
+            'map_lang': 'en_US',
+            'map_scale': 1.0,
+            'map_size': 11
+        }}
+        user_collection.update_one(filter={"user_id": user_id}, update=updates)
+        return True
+    else:
+        logger.error(f"User id {user_id} tries to reset map parameters with state {user_dict['parameter_state']}")
+        return False

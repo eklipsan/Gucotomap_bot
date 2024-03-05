@@ -18,7 +18,8 @@ from workers.database import (
     set_user_parameter_state,
     set_user_map_language,
     set_user_map_scale,
-    set_user_map_size
+    set_user_map_size,
+    reset_map_parameters
 )
 from workers.logset import logger
 
@@ -128,6 +129,24 @@ async def show_map_size(message: Message):
     )
     await message.answer(map_size_text, reply_markup=create_map_size_keyboard())
     logger.debug(f"User id {user_id} clicks on 'Change map size' button ")
+
+
+@router.message(F.text == 'Reset map parameters')
+async def reset_user_parameters(message: Message):
+    user_id = message.from_user.id
+    if reset_map_parameters(user_collection, user_id):
+        map_reset_text = (
+            "🔄 Hooray! We've refreshed your map settings back to their cozy defaults 🌟:\n"
+        "- Language: English-USA (en_US) 🇺🇸\n"
+        "- Scale: A friendly 1.0 for easy navigation 🌍\n"
+        "- Size: Set at 11 for the perfect balance of detail and overview 🔍\n"
+        "Everything's set for your next adventure!"
+        )
+        await message.answer(
+            text=map_reset_text,
+            reply_markup=start_keyboard
+        )
+        logger.debug(f"User id {user_id} resets map parameters to default values")
 
 
 @router.message(lambda message: message.text in map_lang_dict.keys())

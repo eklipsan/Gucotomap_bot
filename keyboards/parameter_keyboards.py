@@ -14,6 +14,9 @@ parameter_menu = ReplyKeyboardMarkup(
             KeyboardButton(text='Change map size')
         ],
         [
+            KeyboardButton(text='Reset map parameters')
+        ],
+        [
             KeyboardButton(text='Go to main menu')
         ]
     ],
