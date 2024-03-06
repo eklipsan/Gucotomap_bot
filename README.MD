@@ -52,6 +52,7 @@ Sample of API-request's result
 - keyboards
     - menu_keyboards.py - stores buttons type of InlineKeyboard, ReplyKeyboard, that used, where our user is in the main menu.
     - user_keyboards.py - stores the same, but they are used, when the user in the game process.
+    - parameter_keyboards.py - stores buttons, that are used to set the game parameters.
 - handlers
     - admin_handlers.py - aiogram handlers, that are available to admin users (they are known in .env)
     - command_handlers.py - handlers for commands starting with '/'

@@ -2,7 +2,7 @@ from aiogram import Router, types, F
 from workers.map_worker import receive_quiz_setup, receive_pass_photo
 from keyboards.user_keyboards import create_keyboard_countries, lost_game_keyboard
 from keyboards.menu_keyboards import start_keyboard
-from access_filters.tg_filter import IsAdmin
+from access_filters.tg_filter import IsAdmin, IsParameterStateEmpty
 from workers.logset import logger
 from workers.database import (
     create_connection,
@@ -18,6 +18,7 @@ from workers.database import (
 
 
 router: Router = Router()
+router.message.filter(IsParameterStateEmpty())
 
 
 # Set up variables to keep track of the user's game state,
@@ -34,7 +35,7 @@ async def setup_quiz(message: types.Message):
     Creates a keyboard for selecting countries and sends a photo to the user.
     """
     user_id = message.from_user.id
-    town, map, countries = receive_quiz_setup()
+    town, map, countries = receive_quiz_setup(user_collection, user_id)
     setup_user_question(
         user_collection,
         user_id,
@@ -140,17 +141,6 @@ async def cancel_game(message: types.Message):
         reply_markup=start_keyboard
     )
     logger.debug(f"User id {user_id} cancels the game")
-
-
-@router.message(F.text == "Go to main menu")
-async def get_main_menu(message: types.Message):
-    "Message handler that displays a message indicating that the user is in the main menu."
-    user_id = message.from_user.id
-    await message.answer(
-        "You are in the main menu",
-        reply_markup=start_keyboard
-    )
-    logger.debug(f"Going to the main menu for user id {user_id}")
 
 
 @router.message(IsAdmin() and F.text == 'Get answer')
