@@ -64,6 +64,64 @@ Sample of API-request's result
 - access_filters
   - tg_filter.py - stores filters for handlers.
 
+## Deployment Instruction
+
+To deploy the Gucotomap Telegram Bot, follow these steps:
+
+### 1. Clone the Repository
+
+First, clone the repository to your local machine or server where you intend to run the bot.
+
+```bash
+git clone https://github.com/eklipsan/Gucotomap_bot
+cd Gucotomap_bot
+```
+### 2. Set Up a Virtual Environment
+
+It's recommended to use a virtual environment for Python projects. You can set one up using:
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+
+
+### 3. Install Dependencies
+
+Install the required Python packages listed in `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+
+### 4. Configure Environment Variables
+
+Copy the `.env.example` file in the root directory of the project to a new file called `.env`. You'll need to set the following environment variables:
+
+- `BOT_TOKEN`: Your Telegram Bot Token from BotFather.
+- `ADMIN_IDS`: A list of Telegram user IDs that will have admin privileges.
+- `MONGODB_NAME`: Your MongoDB username.
+- `MONGODB_PASSWORD`: Your MongoDB password.
+- `MONGODB_CLUSTER`: Your MongoDB cluster address.
+- `API_KEY_MAP`: Your Yandex Static Map API key. (You may not replace this variable with your own, because env.example's variable is working)
+
+
+
+### 5. Run the Bot
+
+With the environment configured, you can start the bot using:
+
+```bash
+python3 bot.py
+```
+
+
+The bot should now be running and able to respond to commands sent on Telegram.
+
+### 6. (Optional) Configure Logging
+
+You can adjust logging settings in the `.env` file to enable or disable console and file logging, specify the log file path, and set the logging level.
 
 ## Feedback
 
