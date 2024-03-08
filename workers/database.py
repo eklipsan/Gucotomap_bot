@@ -1,3 +1,4 @@
+from aiogram.types import Message
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from config_data.config import load_config
@@ -44,15 +45,27 @@ def create_connection() -> Collection:
     return user_collection
 
 
-def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int = 5) -> None:
+def init_user(
+        user_collection: Collection,
+        user_id: int,
+        message: Message,
+        ATTEMPTS: int = 5) -> None:
     """
     Initializes a new user in the MongoDB database.
 
     Args:
         user_collection: A Collection object representing the 'users' collection in the MongoDB database.
         user_id: The unique identifier of the user.
+        message: The Message object of aiogram type.
         ATTEMPTS: The maximum number of attempts allowed for each game.
     """
+    # Extract the user's first name, last name, and language code from the message object
+    first_name = message.from_user.first_name
+    last_name = message.from_user.last_name
+    username = message.from_user.username
+    is_premium = message.from_user.is_premium
+    is_bot = message.from_user.is_bot
+    language_code = message.from_user.language_code
 
     # Check if the user already exists in the database
     if user_collection.find_one(filter={"user_id": user_id}, ) is None:
@@ -80,6 +93,12 @@ def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int = 5) -> N
         user_collection.insert_one(new_user)
         logger.info(f"Creating a new user id {user_id}")
     updates = {'$set': {
+        'first_name': first_name,
+        'last_name': last_name,
+        'username': username,
+        'is_premium': is_premium,
+        'is_bot': is_bot,
+        'language_code': language_code,
         'game': False,
         'attempts': ATTEMPTS,
         'score': 0,

@@ -14,7 +14,7 @@ user_collection = create_connection()
 @router.message(Command('start'))
 async def start_handler(message: Message):
     user_id = message.from_user.id
-    init_user(user_collection, user_id)
+    init_user(user_collection, user_id, message)
     start_message = (
         'Welcome to the game Gucotomap! 🗺\n'
         'In this game you have to guess countries by satellite images of their cities🧐\n'
