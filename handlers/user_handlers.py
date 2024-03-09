@@ -47,7 +47,6 @@ async def setup_quiz(message: types.Message):
         )
     user_dict = get_user_info(user_collection, user_id)
     # These del line should reconsidered, because they take much space in logs
-    del user_dict['_id']
     del user_dict['map_url']
     if user_dict['map_invalid_response'] is True:
         # If map does not load, send message with explanation and a dog photo

@@ -267,6 +267,12 @@ def get_user_info(user_collection: Collection, user_id: int) -> dict:
     Returns:
         A user info dictionary with keys:
         user_id - int,
+        first_name - str,
+        last_name - str,
+        nickname - str,
+        premium_status - (None|bool),
+        bot_status - bool,
+        language_code - str,
         game - bool,
         attempts - int,
         score - int,
@@ -283,7 +289,7 @@ def get_user_info(user_collection: Collection, user_id: int) -> dict:
 
     # Retrieve the user document from the database
     user_dict = user_collection.find_one(filter={"user_id": user_id})
-
+    del user_dict['_id']
     # Return the user's current score and number of attempts
     logger.debug(f"Retrieving MongoDB values for user id {user_id}")
     return user_dict

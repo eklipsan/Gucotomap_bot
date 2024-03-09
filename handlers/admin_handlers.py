@@ -37,14 +37,12 @@ async def admin_get_user_info(message: Message):
     message_list = message.text.split()
     if len(message_list) == 3:
         user_dict = get_user_info(user_collection, user_id)
-        del user_dict['_id']
         pretty_dict_str = dumps(user_dict, indent=4)
         await message.answer(pretty_dict_str)
     else:
         try:
             selected_user_id = int(message_list[-1])
             user_dict = get_user_info(user_collection, selected_user_id)
-            del user_dict['_id']
             pretty_dict_str = dumps(user_dict, indent=4)
             await message.answer(pretty_dict_str)
         except:
