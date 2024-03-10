@@ -5,6 +5,7 @@ from config_data.config import load_config
 from pymongo.collection import Collection
 from workers.logset import logger
 from typing import Literal
+import prettytable as pt
 
 
 def create_connection() -> Collection:
@@ -490,3 +491,42 @@ def reset_map_parameters(
     else:
         logger.error(f"User id {user_id} tries to reset map parameters with state {user_dict['parameter_state']}")
         return False
+
+
+def create_leaderboard(
+    user_collection: Collection,
+    admin_output: bool = False
+) -> str:
+    """
+    Create a leaderboard of users based on their max score and played games.
+    If admin_output is False, the function returns the leaderboard with:
+    1. Rank
+    2. Username
+    3. Max score
+    4. Played games
+
+    If admin_output is True, the function returns the leaderboard with:
+    1. User id
+    2. Username
+    3. Current score.
+    """
+    cur = user_collection.find({})
+    user_data = [get_user_info(user_collection, user['user_id']) for user in cur if 'user_id' in user.keys()]
+    sorted_user_data = sorted(user_data, key=lambda x: (-x['max_score'], -x['played_games']))
+    if admin_output is False:
+        table = pt.PrettyTable(['Rank', 'Username', 'Max score', 'Played games'])
+        table.align['Rank'] = 'l'
+        table.align['Username'] = 'l'
+        table.align['Max score'] = 'r'
+        table.align['Played games'] = 'r'
+        for index, user in enumerate(sorted_user_data, 1):
+            table.add_row([index, f'{user["username"]}', f'{user["max_score"]}', f'{user["played_games"]}'])
+        return table
+    else:
+        table = pt.PrettyTable(['User id', 'Username', 'Current score'])
+        table.align['User id'] = 'r'
+        table.align['Username'] = 'l'
+        table.align['Current score'] = 'r'
+        for user in sorted_user_data:
+            table.add_row([f'{user["user_id"]}', f'{user["username"]}', f'{user["score"]}'])
+        return table
