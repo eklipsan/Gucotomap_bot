@@ -5,7 +5,7 @@ Gucotomomap - это по сути аббревиатура от "Guess the coun
 
 Вы можете поиграть в нее прямо сейчас, перейдя по следующей ссылке https://t.me/gucotomap_bot
 
-![](readme_files/gameplay.gif)
+![](readme_files/gameplay2.4.gif)
 
 
 

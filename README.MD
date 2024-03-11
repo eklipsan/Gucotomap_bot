@@ -5,7 +5,7 @@ Gucotomomap is basically an acronym for "Guess the country by the town on the ma
 
 You can play it right now by clicking on the following link https://t.me/gucotomap_bot
 
-![](readme_files/gameplay.gif)
+![](readme_files/gameplay2.4.gif)
 
 
 
