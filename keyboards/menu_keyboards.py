@@ -9,6 +9,9 @@ start_keyboard = types.ReplyKeyboardMarkup(
         ],
         [
             types.KeyboardButton(text='Statistic'),
+            types.KeyboardButton(text='Leaderboard')
+        ],
+        [
             types.KeyboardButton(text='Feedback')
         ]
     ],

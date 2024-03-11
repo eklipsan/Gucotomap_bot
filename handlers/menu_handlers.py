@@ -19,7 +19,8 @@ from workers.database import (
     set_user_map_language,
     set_user_map_scale,
     set_user_map_size,
-    reset_map_parameters
+    reset_map_parameters,
+    create_leaderboard
 )
 from workers.logset import logger
 
@@ -197,3 +198,16 @@ async def get_main_menu(message: Message):
         reply_markup=start_keyboard
     )
     logger.debug(f"Going to the main menu for user id {user_id}")
+
+
+@router.message(F.text == 'Leaderboard')
+async def show_leaderboard(message: Message):
+    user_id = message.from_user.id
+    table = create_leaderboard(user_collection)
+    leaderboard_message = (
+        "🏆 <b>Leaderboard</b> 🏆\n\n"
+        "Here are the top performers! Can you spot yourself?\n\n"
+        f"<pre>{table}</pre>"
+    )
+    await message.answer(leaderboard_message)
+    logger.debug(f"User id {user_id} clicks on 'Leaderboard' button")
