@@ -4,7 +4,7 @@ from aiogram.filters import Command
 from config_data.config import Config, load_config
 from access_filters.tg_filter import IsAdmin
 from workers.logset import logger
-from workers.database import create_connection, get_user_info
+from workers.database import create_connection, get_user_info, create_leaderboard
 from json import dumps
 
 config: Config = load_config()
@@ -37,14 +37,12 @@ async def admin_get_user_info(message: Message):
     message_list = message.text.split()
     if len(message_list) == 3:
         user_dict = get_user_info(user_collection, user_id)
-        del user_dict['_id']
         pretty_dict_str = dumps(user_dict, indent=4)
         await message.answer(pretty_dict_str)
     else:
         try:
             selected_user_id = int(message_list[-1])
             user_dict = get_user_info(user_collection, selected_user_id)
-            del user_dict['_id']
             pretty_dict_str = dumps(user_dict, indent=4)
             await message.answer(pretty_dict_str)
         except:
@@ -52,6 +50,15 @@ async def admin_get_user_info(message: Message):
             await message.answer(error_msg)
             logger.exception(f"User id {user_id} types the wrong format of admin command: {message.text}")
     logger.debug(f"User id {user_id} gets user info")
+
+
+@router.message(F.text == 'Get users')
+async def admin_get_users(message: Message):
+    user_id = message.from_user.id
+    user_collection = create_connection()
+    admin_table = create_leaderboard(user_collection, admin_output=True)
+    await message.answer(f"<pre>{admin_table}</pre>")
+    logger.debug(f"User_id {user_id} clicks on admin users table")
 
 
 @router.message(Command('admin'))
@@ -62,6 +69,7 @@ async def admin_show_manual(message: Message):
         '<code>Get log</code> - return the log file\n'
         '<code>Get env</code> - return the env file\n'
         '<code>Get user info [user_id]</code> - return all info of user id. If user id is not typed, it returns info of the current user id\n'
+        '<code>Get users</code> - return a table of all users with short information\n'
         '<code>Get answer</code> - show the right answer during the game\n\n'
         'Other commands, that are hidden, but available to everyone\n'
         '<code>Get user id</code> - show user\'s id'

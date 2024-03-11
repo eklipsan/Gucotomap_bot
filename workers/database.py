@@ -1,9 +1,11 @@
+from aiogram.types import Message
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from config_data.config import load_config
 from pymongo.collection import Collection
 from workers.logset import logger
 from typing import Literal
+import prettytable as pt
 
 
 def create_connection() -> Collection:
@@ -44,15 +46,27 @@ def create_connection() -> Collection:
     return user_collection
 
 
-def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int = 5) -> None:
+def init_user(
+        user_collection: Collection,
+        user_id: int,
+        message: Message,
+        ATTEMPTS: int = 5) -> None:
     """
     Initializes a new user in the MongoDB database.
 
     Args:
         user_collection: A Collection object representing the 'users' collection in the MongoDB database.
         user_id: The unique identifier of the user.
+        message: The Message object of aiogram type.
         ATTEMPTS: The maximum number of attempts allowed for each game.
     """
+    # Extract the user's first name, last name, and language code from the message object
+    first_name = message.from_user.first_name
+    last_name = message.from_user.last_name
+    username = message.from_user.username
+    is_premium = message.from_user.is_premium
+    is_bot = message.from_user.is_bot
+    language_code = message.from_user.language_code
 
     # Check if the user already exists in the database
     if user_collection.find_one(filter={"user_id": user_id}, ) is None:
@@ -80,6 +94,12 @@ def init_user(user_collection: Collection, user_id: int, ATTEMPTS: int = 5) -> N
         user_collection.insert_one(new_user)
         logger.info(f"Creating a new user id {user_id}")
     updates = {'$set': {
+        'first_name': first_name,
+        'last_name': last_name,
+        'username': username,
+        'is_premium': is_premium,
+        'is_bot': is_bot,
+        'language_code': language_code,
         'game': False,
         'attempts': ATTEMPTS,
         'score': 0,
@@ -248,6 +268,12 @@ def get_user_info(user_collection: Collection, user_id: int) -> dict:
     Returns:
         A user info dictionary with keys:
         user_id - int,
+        first_name - str,
+        last_name - str,
+        nickname - str,
+        premium_status - (None|bool),
+        bot_status - bool,
+        language_code - str,
         game - bool,
         attempts - int,
         score - int,
@@ -264,7 +290,7 @@ def get_user_info(user_collection: Collection, user_id: int) -> dict:
 
     # Retrieve the user document from the database
     user_dict = user_collection.find_one(filter={"user_id": user_id})
-
+    del user_dict['_id']
     # Return the user's current score and number of attempts
     logger.debug(f"Retrieving MongoDB values for user id {user_id}")
     return user_dict
@@ -465,3 +491,42 @@ def reset_map_parameters(
     else:
         logger.error(f"User id {user_id} tries to reset map parameters with state {user_dict['parameter_state']}")
         return False
+
+
+def create_leaderboard(
+    user_collection: Collection,
+    admin_output: bool = False
+) -> str:
+    """
+    Create a leaderboard of users based on their max score and played games.
+    If admin_output is False, the function returns the leaderboard with:
+    1. Rank
+    2. Username
+    3. Max score
+    4. Played games
+
+    If admin_output is True, the function returns the leaderboard with:
+    1. User id
+    2. Username
+    3. Current score.
+    """
+    cur = user_collection.find({})
+    user_data = [get_user_info(user_collection, user['user_id']) for user in cur if 'user_id' in user.keys()]
+    sorted_user_data = sorted(user_data, key=lambda x: (-x['max_score'], -x['played_games']))
+    if admin_output is False:
+        table = pt.PrettyTable(['Rank', 'Username', 'Max score', 'Played games'])
+        table.align['Rank'] = 'l'
+        table.align['Username'] = 'l'
+        table.align['Max score'] = 'r'
+        table.align['Played games'] = 'r'
+        for index, user in enumerate(sorted_user_data, 1):
+            table.add_row([index, f'{user["username"]}', f'{user["max_score"]}', f'{user["played_games"]}'])
+        return table
+    else:
+        table = pt.PrettyTable(['User id', 'Username', 'Current score'])
+        table.align['User id'] = 'r'
+        table.align['Username'] = 'l'
+        table.align['Current score'] = 'r'
+        for user in sorted_user_data:
+            table.add_row([f'{user["user_id"]}', f'{user["username"]}', f'{user["score"]}'])
+        return table
