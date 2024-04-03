@@ -22,6 +22,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: supersecretpassword
     ports:
       - 27017:27017
+    volumes:
+      - ./gucotomap_data:/data/db
     networks:
       - gucotomap_net
 
