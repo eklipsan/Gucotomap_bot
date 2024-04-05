@@ -27,6 +27,10 @@ services:
       - LOG_LEVEL_INFO_FILE=10
     networks:
       - gucotomap_net
+    restart: always
+    depends_on:
+      mongo:
+          condition: service_healthy
 
   mongo:
     container_name: gucotomap_db
@@ -39,8 +43,15 @@ services:
       - 27017:27017
     volumes:
       - ./gucotomap_data:/data/db
+    restart: always
     networks:
       - gucotomap_net
+    healthcheck:
+      test: ps -edaf | grep mongo | grep -v grep
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
   mongo-express:
     container_name: gucotomap_web
@@ -52,8 +63,13 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: admin
       ME_CONFIG_MONGODB_ADMINPASSWORD: pass
       ME_CONFIG_MONGODB_URL: mongodb://admin:supersecretpassword@mongo:27017/
+    restart: unless-stopped
     networks:
       - gucotomap_net
+    depends_on:
+      mongo:
+        condition: service_healthy
+
 
 networks:
   gucotomap_net:
