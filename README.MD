@@ -87,7 +87,7 @@ Now it remains to run the command
 ```bash
  docker compose up
 ```
-1. After entering the command, the MongoDB container will be started, which is responsible for storing user data (this data will be stored in the /Gucotomap_data volume).
+1. After entering the command, the MongoDB container will be started, which is responsible for storing user data (this data will be stored in the Gucotomap_data volume).
 2. You will also be able to monitor MongoDB through the web interface at [localhost:8081](localhost:8081), where you need to enter login: admin, password: pass
 
 ![MongoDB web interface](readme_files/docker_mongo_web.png)

@@ -42,7 +42,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - ./gucotomap_data:/data/db
+      - gucotomap_data:/data/db
     restart: always
     networks:
       - gucotomap_net
@@ -74,3 +74,6 @@ services:
 networks:
   gucotomap_net:
     driver: bridge
+
+volumes:
+  gucotomap_data:
