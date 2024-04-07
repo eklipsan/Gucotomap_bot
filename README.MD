@@ -14,6 +14,7 @@ You can play it right now by clicking on the following link https://t.me/gucotom
 - Python 3.10
     - aiogram - library for developing telegram bots
     - pymongo - Library for storing user data in MongoDB
+- Docker - used for fast bot deployment
 
 
 # General info
@@ -38,6 +39,7 @@ Sample of API-request's result
     - map_worker.py - works with api-map, and represent main thing in this game - creating a map image and providing response options.
     - menu.py - sets menu option (/start, /help, etc)
     - database.py - simplifies work with user data from cloud MongoDB
+    - docker_database.py - the same database.py, but for docker deployment.
     - logset.py - creates logs of the bot's work. There are logging options in .env.example file
 - map_data - stores json format file, where a city is represented like dictionary. For example:
 ```json
@@ -66,6 +68,38 @@ Sample of API-request's result
 
 ## Deployment Instruction
 
+## Method 1. Docker compose
+To deploy the Gucotomap bot, follow these steps:
+### 1. Clone the repository
+
+First, clone the repository to the local machine or server where you intend to run the bot.
+
+```bash
+git clone https://github.com/eklipsan/Gucotomap_bot
+cd Gucotomap_bot
+```
+### 2. Open the docker-compose.yaml file and configure the environment variables
+
+In the docker-compose.yaml file, you can configure the environment variables that will be used when the container starts. What you should definitely change is the ``BOT_TOKEN`` variable, which is responsible for your bot's token. The rest of the variables can be left as default.
+
+### 3. Run the docker compose up command
+Now it remains to run the command
+```bash
+ docker compose up
+```
+1. After entering the command, the MongoDB container will be started, which is responsible for storing user data (this data will be stored in the Gucotomap_data volume).
+2. You will also be able to monitor MongoDB through the web interface at [localhost:8081](localhost:8081), where you need to enter login: admin, password: pass
+
+![MongoDB web interface](readme_files/docker_mongo_web.png)
+
+1. And now you can go to your bot, whose token you entered in docker-compose.yaml, and click /start, which will start the bot!
+
+
+## Method 2. Manual installation and configuration
+
+To deploy the Gucotomap bot this way, follow these steps:
+
+Translated with DeepL.com (free version)
 To deploy the Gucotomap Telegram Bot, follow these steps:
 
 ### 1. Clone the Repository
